@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   BarChart3,
   Bell,
@@ -73,26 +74,35 @@ import {
   Legend,
 } from "recharts"
 
-// Tab definitions
+// Tab definitions - Consolidated to 3 main sections
 const tabs = [
-  { id: "overview", label: "Overview", icon: BarChart3 },
+  { id: "home", label: "Home", icon: BarChart3 },
   { id: "campaigns", label: "Campaigns", icon: Send },
+  { id: "insights", label: "Insights", icon: TrendingUp },
+]
+
+// Sub-navigation for Campaigns
+const campaignSubTabs = [
+  { id: "campaigns-list", label: "All Campaigns", icon: Send },
   { id: "templates", label: "Templates", icon: FileText },
-  { id: "customer-feedback", label: "Customer Feedback", icon: Star },
+]
+
+// Sub-navigation for Insights
+const insightSubTabs = [
   { id: "analytics", label: "Analytics", icon: TrendingUp },
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "customer-feedback", label: "Customer Feedback", icon: Star },
 ]
 
 // Campaign status options
 const campaignStatuses = {
-  draft: { label: "Draft", color: "bg-slate-100 text-slate-600", icon: FileText },
+  draft: { label: "Draft", color: "bg-blue-50 text-gray-600", icon: FileText },
   pending: { label: "Pending Approval", color: "bg-amber-100 text-amber-700", icon: Clock },
   approved: { label: "Approved", color: "bg-emerald-100 text-emerald-700", icon: CheckCircle2 },
   rejected: { label: "Rejected", color: "bg-red-100 text-red-700", icon: XCircle },
   scheduled: { label: "Scheduled", color: "bg-blue-100 text-blue-700", icon: Calendar },
   active: { label: "Active", color: "bg-emerald-100 text-emerald-700", icon: Play },
-  paused: { label: "Paused", color: "bg-slate-100 text-slate-600", icon: Pause },
-  completed: { label: "Completed", color: "bg-slate-100 text-slate-600", icon: CheckCircle2 },
+  paused: { label: "Paused", color: "bg-blue-50 text-gray-600", icon: Pause },
+  completed: { label: "Completed", color: "bg-blue-50 text-gray-600", icon: CheckCircle2 },
 }
 
 // Mock campaigns data
@@ -333,45 +343,44 @@ const mockCustomerFeedback = [
 ]
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState("home")
+  const [campaignSubTab, setCampaignSubTab] = useState("campaigns-list")
+  const [insightSubTab, setInsightSubTab] = useState("analytics")
   const [showCampaignBuilder, setShowCampaignBuilder] = useState(false)
   const [showTemplateBuilder, setShowTemplateBuilder] = useState(false)
   const [editingTemplate, setEditingTemplate] = useState<(typeof mockTemplates)[0] | null>(null)
   const [showProfileMenu, setShowProfileMenu] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/20 to-white flex flex-col">
       <header className="sticky top-0 z-50 px-4 py-3">
         <div className="max-w-[1600px] mx-auto">
-          <div className="bg-white/80 backdrop-blur-xl border border-slate-200/50 rounded-2xl shadow-lg shadow-slate-200/30 px-4">
+          <div className="glass-header backdrop-blur-xl border border-blue-100/50 rounded-2xl shadow-lg shadow-blue-500/10 px-4">
             <div className="h-16 flex items-center justify-between">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2.5 group">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-lg shadow-slate-500/20 group-hover:shadow-slate-500/30 transition-shadow">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="w-5 h-5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path d="M12 4v16m-8-8h16" strokeLinecap="round" />
-                  </svg>
+                <div className="relative h-10 w-36 transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_8px_rgba(0,102,255,0.4)]">
+                  <Image
+                    src="/logo-standard.png"
+                    alt="CORO"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
                 </div>
-                <span className="font-bold text-xl text-slate-800 tracking-tight">LoopSync</span>
               </Link>
 
-              <nav className="hidden lg:flex items-center bg-slate-100/80 rounded-xl p-1 relative">
+              <nav className="hidden lg:flex items-center bg-blue-50/50 rounded-xl p-1 relative">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all z-10 ${
-                      activeTab === tab.id ? "text-white" : "text-slate-600 hover:text-slate-900"
+                      activeTab === tab.id ? "text-white" : "text-gray-600 hover:text-gray-900"
                     }`}
                   >
                     {activeTab === tab.id && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-slate-700 to-slate-900 rounded-lg shadow-lg shadow-slate-500/20" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#0066FF] to-[#0052CC] rounded-lg shadow-lg shadow-blue-500/30" />
                     )}
                     <tab.icon className="w-4 h-4 relative z-10" />
                     <span className="relative z-10">{tab.label}</span>
@@ -382,59 +391,71 @@ export default function DashboardPage() {
               {/* Right Side */}
               <div className="flex items-center gap-2">
                 {/* Search */}
-                <div className="hidden xl:flex items-center gap-2 bg-slate-100/80 rounded-xl px-3 py-2 group focus-within:ring-2 focus-within:ring-slate-400/20 transition-all">
-                  <Search className="w-4 h-4 text-slate-400 group-focus-within:text-slate-600" />
+                <div className="hidden xl:flex items-center gap-2 bg-blue-50/50 rounded-xl px-3 py-2 group focus-within:ring-2 focus-within:ring-[#0066FF]/20 transition-all">
+                  <Search className="w-4 h-4 text-gray-400 group-focus-within:text-[#0066FF]" />
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none w-40"
+                    className="bg-transparent text-sm text-gray-800 placeholder:text-gray-400 outline-none w-40"
                   />
-                  <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 bg-white rounded border border-slate-200">
+                  <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-white rounded border border-blue-100">
                     ⌘K
                   </kbd>
                 </div>
 
                 {/* Notifications */}
-                <button className="relative p-2.5 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 transition-colors group">
-                  <Bell className="w-5 h-5 text-slate-600 group-hover:text-slate-800" />
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-slate-800 rounded-full ring-2 ring-white" />
+                <button className="relative p-2.5 rounded-xl bg-blue-50/50 hover:bg-blue-100/50 transition-colors group">
+                  <Bell className="w-5 h-5 text-gray-600 group-hover:text-[#0066FF]" />
+                  <span className="absolute top-2 right-2 w-2 h-2 bg-[#0066FF] rounded-full ring-2 ring-white" />
                 </button>
 
                 {/* Profile Dropdown */}
                 <div className="relative">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 transition-colors"
+                    className="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-blue-50/50 hover:bg-blue-100/50 transition-colors"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0066FF] to-[#0052CC] flex items-center justify-center shadow-sm">
                       <span className="text-sm font-semibold text-white">JD</span>
                     </div>
                     <ChevronDown
-                      className={`w-4 h-4 text-slate-500 transition-transform ${showProfileMenu ? "rotate-180" : ""}`}
+                      className={`w-4 h-4 text-gray-500 transition-transform ${showProfileMenu ? "rotate-180" : ""}`}
                     />
                   </button>
 
                   {showProfileMenu && (
-                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden z-50">
-                      <div className="p-4 border-b border-slate-100">
-                        <p className="font-semibold text-slate-800">John Doe</p>
-                        <p className="text-sm text-slate-500">john@company.com</p>
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-blue-100 overflow-hidden z-50">
+                      <div className="p-4 border-b border-blue-50">
+                        <p className="font-semibold text-gray-800">John Doe</p>
+                        <p className="text-sm text-gray-500">john@company.com</p>
                       </div>
                       <div className="p-2">
-                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-blue-50 transition-colors">
                           <User className="w-4 h-4" />
                           Profile Settings
                         </button>
-                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-blue-50 transition-colors">
                           <CreditCard className="w-4 h-4" />
                           Billing
                         </button>
-                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-blue-50 transition-colors">
                           <HelpCircle className="w-4 h-4" />
                           Help & Support
                         </button>
                       </div>
-                      <div className="p-2 border-t border-slate-100">
+                      <div className="p-2 border-t border-blue-50">
+                        <button
+                          onClick={() => {
+                            setActiveTab("settings")
+                            setShowProfileMenu(false)
+                          }}
+                          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-blue-50 transition-colors"
+                        >
+                          <Settings className="w-4 h-4" />
+                          Settings
+                        </button>
+                      </div>
+                      <div className="p-2 border-t border-blue-50">
                         <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-600 hover:bg-red-50 transition-colors">
                           <LogOut className="w-4 h-4" />
                           Sign Out
@@ -454,8 +475,8 @@ export default function DashboardPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                     activeTab === tab.id
-                      ? "bg-gradient-to-r from-slate-700 to-slate-900 text-white shadow-lg shadow-slate-500/20"
-                      : "text-slate-600 hover:bg-slate-100"
+                      ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/30"
+                      : "text-gray-600 hover:bg-blue-50"
                   }`}
                 >
                   <tab.icon className="w-4 h-4" />
@@ -469,23 +490,70 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6">
-        {activeTab === "overview" && <OverviewTab />}
-        {activeTab === "campaigns" && <CampaignsTab onCreateCampaign={() => setShowCampaignBuilder(true)} />}
-        {activeTab === "templates" && (
-          <TemplatesTab
-            onCreateTemplate={() => {
-              setEditingTemplate(null)
-              setShowTemplateBuilder(true)
-            }}
-            onEditTemplate={(template) => {
-              setEditingTemplate(template)
-              setShowTemplateBuilder(true)
-            }}
-          />
-        )}
-        {activeTab === "customer-feedback" && <CustomerFeedbackTab />}
-        {activeTab === "analytics" && <AnalyticsTab />}
-        {activeTab === "settings" && <SettingsTab />}
+        <div className="space-y-4">
+          {/* Sub-navigation for Campaigns */}
+          {activeTab === "campaigns" && (
+            <div className="flex items-center gap-2 bg-blue-50/50 rounded-xl p-1 w-fit">
+              {campaignSubTabs.map((subTab) => (
+                <button
+                  key={subTab.id}
+                  onClick={() => setCampaignSubTab(subTab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    campaignSubTab === subTab.id
+                      ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/30"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <subTab.icon className="w-4 h-4" />
+                  {subTab.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Sub-navigation for Insights */}
+          {activeTab === "insights" && (
+            <div className="flex items-center gap-2 bg-blue-50/50 rounded-xl p-1 w-fit">
+              {insightSubTabs.map((subTab) => (
+                <button
+                  key={subTab.id}
+                  onClick={() => setInsightSubTab(subTab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    insightSubTab === subTab.id
+                      ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/30"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  <subTab.icon className="w-4 h-4" />
+                  {subTab.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Tab Content */}
+          <div>
+            {activeTab === "home" && <OverviewTab />}
+            {activeTab === "campaigns" && campaignSubTab === "campaigns-list" && (
+              <CampaignsTab onCreateCampaign={() => setShowCampaignBuilder(true)} />
+            )}
+            {activeTab === "campaigns" && campaignSubTab === "templates" && (
+              <TemplatesTab
+                onCreateTemplate={() => {
+                  setEditingTemplate(null)
+                  setShowTemplateBuilder(true)
+                }}
+                onEditTemplate={(template) => {
+                  setEditingTemplate(template)
+                  setShowTemplateBuilder(true)
+                }}
+              />
+            )}
+            {activeTab === "insights" && insightSubTab === "analytics" && <AnalyticsTab />}
+            {activeTab === "insights" && insightSubTab === "customer-feedback" && <CustomerFeedbackTab />}
+            {activeTab === "settings" && <SettingsTab />}
+          </div>
+        </div>
       </main>
 
       {/* Campaign Builder Modal */}
@@ -514,18 +582,18 @@ function OverviewTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Dashboard Overview</h1>
-          <p className="text-slate-500 mt-1">Monitor employee sentiment and engagement in real-time</p>
+          <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+          <p className="text-gray-500 mt-1">Monitor employee sentiment and engagement in real-time</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2 bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+          <Button variant="outline" className="gap-2 bg-white border-blue-100 text-gray-600 hover:bg-blue-50">
             <Download className="w-4 h-4" />
             Export
           </Button>
-          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
-            <Calendar className="w-4 h-4 text-slate-400" />
-            <span className="text-sm text-slate-600">Last 30 days</span>
-            <ChevronDown className="w-4 h-4 text-slate-400" />
+          <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-xl px-3 py-2">
+            <Calendar className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-600">Last 30 days</span>
+            <ChevronDown className="w-4 h-4 text-gray-400" />
           </div>
         </div>
       </div>
@@ -539,7 +607,7 @@ function OverviewTab() {
           change="+4"
           changeType="positive"
           icon={BarChart3}
-          gradient="from-teal-500 to-cyan-600"
+          gradient="from-[#0066FF] to-[#0052CC]"
         />
         <StatCard
           title="Active Conversations"
@@ -573,10 +641,10 @@ function OverviewTab() {
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Recent Alerts - Enhanced */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-semibold text-lg text-slate-800">Recent Alerts</h2>
-              <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-800">
+              <h2 className="font-semibold text-lg text-gray-800">Recent Alerts</h2>
+              <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-800">
                 View All
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
@@ -590,32 +658,32 @@ function OverviewTab() {
                       ? "bg-red-50 hover:bg-red-100 border border-red-100"
                       : alert.type === "medium"
                         ? "bg-amber-50 hover:bg-amber-100 border border-amber-100"
-                        : "bg-slate-50 hover:bg-slate-100 border border-slate-100"
+                        : "bg-blue-50 hover:bg-blue-50 border border-blue-50"
                   }`}
                 >
                   <div
                     className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                      alert.type === "high" ? "bg-red-500" : alert.type === "medium" ? "bg-amber-500" : "bg-teal-500"
+                      alert.type === "high" ? "bg-red-500" : alert.type === "medium" ? "bg-amber-500" : "bg-[#0066FF]"
                     }`}
                   >
                     <alert.icon className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-slate-800">{alert.title}</p>
-                    <p className="text-sm text-slate-500">{alert.team}</p>
+                    <p className="font-medium text-gray-800">{alert.title}</p>
+                    <p className="text-sm text-gray-500">{alert.team}</p>
                   </div>
-                  <span className="text-xs text-slate-400">{alert.time}</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="text-xs text-gray-400">{alert.time}</span>
+                  <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Team Health - Enhanced */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-semibold text-lg text-slate-800">Team Health</h2>
-              <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-800">
+              <h2 className="font-semibold text-lg text-gray-800">Team Health</h2>
+              <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-800">
                 Details
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
@@ -624,9 +692,9 @@ function OverviewTab() {
               {teamHealth.map((team) => (
                 <div key={team.team} className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-slate-800">{team.team}</span>
+                    <span className="font-medium text-gray-800">{team.team}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-slate-500">{team.conversations} conversations</span>
+                      <span className="text-sm text-gray-500">{team.conversations} conversations</span>
                       <span
                         className={`text-sm font-semibold px-2 py-0.5 rounded-full ${
                           Number(team.change) >= 0 ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
@@ -638,7 +706,7 @@ function OverviewTab() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="flex-1 h-3 bg-blue-50 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all ${
                           team.score >= 80
@@ -650,7 +718,7 @@ function OverviewTab() {
                         style={{ width: `${team.score}%` }}
                       />
                     </div>
-                    <span className="text-sm font-bold text-slate-800 w-10 text-right">{team.score}%</span>
+                    <span className="text-sm font-bold text-gray-800 w-10 text-right">{team.score}%</span>
                   </div>
                 </div>
               ))}
@@ -661,8 +729,8 @@ function OverviewTab() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* Top Themes */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h2 className="font-semibold text-lg text-slate-800 mb-5">Top Themes</h2>
+          <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+            <h2 className="font-semibold text-lg text-gray-800 mb-5">Top Themes</h2>
             <div className="space-y-4">
               {topThemes.map((item, index) => (
                 <div key={item.theme} className="flex items-center justify-between group">
@@ -672,18 +740,18 @@ function OverviewTab() {
                         index === 0
                           ? "bg-amber-100 text-amber-700"
                           : index === 1
-                            ? "bg-slate-200 text-slate-600"
+                            ? "bg-slate-200 text-gray-600"
                             : index === 2
                               ? "bg-orange-100 text-orange-700"
-                              : "bg-slate-100 text-slate-500"
+                              : "bg-blue-50 text-gray-500"
                       }`}
                     >
                       {index + 1}
                     </span>
-                    <span className="text-sm text-slate-700 group-hover:text-slate-900">{item.theme}</span>
+                    <span className="text-sm text-gray-700 group-hover:text-slate-900">{item.theme}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-slate-800">{item.count}</span>
+                    <span className="text-sm font-semibold text-gray-800">{item.count}</span>
                     {item.trend === "up" && <TrendingUp className="w-4 h-4 text-emerald-500" />}
                     {item.trend === "down" && <TrendingDown className="w-4 h-4 text-red-500" />}
                   </div>
@@ -693,23 +761,23 @@ function OverviewTab() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-            <h2 className="font-semibold text-lg text-slate-800 mb-5">Quick Actions</h2>
+          <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+            <h2 className="font-semibold text-lg text-gray-800 mb-5">Quick Actions</h2>
             <div className="space-y-3">
-              <Button className="w-full justify-start gap-3 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 shadow-lg shadow-teal-500/25">
+              <Button className="w-full justify-start gap-3 bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0066FF] shadow-lg shadow-blue-500/25">
                 <Send className="w-4 h-4" />
                 Launch New Campaign
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-3 bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="w-full justify-start gap-3 bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
               >
                 <FileText className="w-4 h-4" />
                 Create Template
               </Button>
               <Button
                 variant="outline"
-                className="w-full justify-start gap-3 bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="w-full justify-start gap-3 bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
               >
                 <Download className="w-4 h-4" />
                 Export Report
@@ -733,8 +801,8 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Campaigns</h1>
-          <p className="text-slate-500 mt-1">Create and manage employee outreach campaigns</p>
+          <h1 className="text-2xl font-bold text-gray-800">Campaigns</h1>
+          <p className="text-gray-500 mt-1">Create and manage employee outreach campaigns</p>
         </div>
         <Button onClick={onCreateCampaign} className="gap-2 shadow-lg shadow-primary/20">
           <Plus className="w-4 h-4" />
@@ -750,8 +818,8 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
             onClick={() => setFilter(status)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               filter === status
-                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25"
-                : "bg-slate-100 text-slate-600 hover:text-slate-800"
+                ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/25"
+                : "bg-blue-50 text-gray-600 hover:text-gray-800"
             }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -760,19 +828,19 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
       </div>
 
       {/* Campaigns Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="glass-card rounded-2xl border border-blue-100/50 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="text-left p-4 font-semibold text-sm text-slate-500">Campaign</th>
-                <th className="text-left p-4 font-semibold text-sm text-slate-500">Status</th>
-                <th className="text-left p-4 font-semibold text-sm text-slate-500 hidden md:table-cell">Audience</th>
-                <th className="text-left p-4 font-semibold text-sm text-slate-500 hidden lg:table-cell">
+              <tr className="border-b border-blue-100 bg-blue-50">
+                <th className="text-left p-4 font-semibold text-sm text-gray-500">Campaign</th>
+                <th className="text-left p-4 font-semibold text-sm text-gray-500">Status</th>
+                <th className="text-left p-4 font-semibold text-sm text-gray-500 hidden md:table-cell">Audience</th>
+                <th className="text-left p-4 font-semibold text-sm text-gray-500 hidden lg:table-cell">
                   Response Rate
                 </th>
-                <th className="text-left p-4 font-semibold text-sm text-slate-500 hidden lg:table-cell">Next Send</th>
-                <th className="text-right p-4 font-semibold text-sm text-slate-500">Actions</th>
+                <th className="text-left p-4 font-semibold text-sm text-gray-500 hidden lg:table-cell">Next Send</th>
+                <th className="text-right p-4 font-semibold text-sm text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -782,17 +850,17 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
                 return (
                   <tr
                     key={campaign.id}
-                    className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors"
+                    className="border-b border-blue-50 last:border-0 hover:bg-blue-50 transition-colors"
                   >
                     <td className="p-4">
                       <div>
-                        <p className="font-medium text-slate-800">{campaign.name}</p>
+                        <p className="font-medium text-gray-800">{campaign.name}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span
                             className={`text-xs px-2 py-0.5 rounded-full ${
                               campaign.type === "recurring"
-                                ? "bg-teal-100 text-teal-700"
-                                : "bg-slate-200 text-slate-600"
+                                ? "bg-blue-100 text-[#0052CC]"
+                                : "bg-slate-200 text-gray-600"
                             }`}
                           >
                             {campaign.type === "recurring" ? (
@@ -803,7 +871,7 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
                               "One-time"
                             )}
                           </span>
-                          <span className="text-xs text-slate-500">{campaign.template}</span>
+                          <span className="text-xs text-gray-500">{campaign.template}</span>
                         </div>
                       </div>
                     </td>
@@ -817,9 +885,9 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
                     </td>
                     <td className="p-4 hidden md:table-cell">
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-slate-500" />
-                        <span className="text-sm text-slate-800">{campaign.audience}</span>
-                        <span className="text-xs text-slate-500">({campaign.audienceCount})</span>
+                        <Users className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-800">{campaign.audience}</span>
+                        <span className="text-xs text-gray-500">({campaign.audienceCount})</span>
                       </div>
                     </td>
                     <td className="p-4 hidden lg:table-cell">
@@ -827,28 +895,28 @@ function CampaignsTab({ onCreateCampaign }: { onCreateCampaign: () => void }) {
                         <div className="flex items-center gap-2">
                           <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-teal-500 rounded-full"
+                              className="h-full bg-[#0066FF] rounded-full"
                               style={{ width: `${campaign.responseRate}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-slate-800">{campaign.responseRate}%</span>
+                          <span className="text-sm font-medium text-gray-800">{campaign.responseRate}%</span>
                         </div>
                       ) : (
-                        <span className="text-sm text-slate-500">—</span>
+                        <span className="text-sm text-gray-500">—</span>
                       )}
                     </td>
                     <td className="p-4 hidden lg:table-cell">
-                      <span className="text-sm text-slate-500">{campaign.nextSend || "—"}</span>
+                      <span className="text-sm text-gray-500">{campaign.nextSend || "—"}</span>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800">
+                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800">
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800">
+                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800">
                           <Edit3 className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800">
+                        <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800">
                           <MoreHorizontal className="w-4 h-4" />
                         </Button>
                       </div>
@@ -882,8 +950,8 @@ function TemplatesTab({
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Templates</h1>
-          <p className="text-slate-500 mt-1">Manage conversation templates with branching logic</p>
+          <h1 className="text-2xl font-bold text-gray-800">Templates</h1>
+          <p className="text-gray-500 mt-1">Manage conversation templates with branching logic</p>
         </div>
         <Button onClick={onCreateTemplate} className="gap-2 shadow-lg shadow-primary/20">
           <Plus className="w-4 h-4" />
@@ -899,8 +967,8 @@ function TemplatesTab({
             onClick={() => setFilter(category)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               filter === category
-                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25"
-                : "bg-slate-100 text-slate-600 hover:text-slate-800"
+                ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/25"
+                : "bg-blue-50 text-gray-600 hover:text-gray-800"
             }`}
           >
             {category === "all" ? "All Templates" : category}
@@ -913,28 +981,28 @@ function TemplatesTab({
         {filteredTemplates.map((template) => (
           <div
             key={template.id}
-            className="bg-white rounded-2xl border border-slate-200 p-6 hover:border-teal-300 hover:shadow-lg transition-all group"
+            className="glass-card rounded-2xl border border-blue-100/50 p-6 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/20 transition-all group"
           >
             <div className="flex items-start justify-between mb-4">
               <div
                 className={`w-11 h-11 rounded-xl flex items-center justify-center ${
-                  template.isDefault ? "bg-teal-100" : "bg-cyan-100"
+                  template.isDefault ? "bg-blue-100" : "bg-blue-100"
                 }`}
               >
                 {template.isDefault ? (
-                  <FileText className="w-5 h-5 text-teal-600" />
+                  <FileText className="w-5 h-5 text-[#0066FF]" />
                 ) : (
-                  <Sparkles className="w-5 h-5 text-cyan-600" />
+                  <Sparkles className="w-5 h-5 text-[#0066FF]" />
                 )}
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800">
+                <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800">
                   <Copy className="w-4 h-4" />
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800"
+                  className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800"
                   onClick={() => onEditTemplate(template)}
                 >
                   <Edit3 className="w-4 h-4" />
@@ -947,10 +1015,10 @@ function TemplatesTab({
               </div>
             </div>
 
-            <h3 className="font-semibold text-slate-800 mb-1">{template.name}</h3>
-            <p className="text-sm text-slate-500 mb-4 line-clamp-2">{template.description}</p>
+            <h3 className="font-semibold text-gray-800 mb-1">{template.name}</h3>
+            <p className="text-sm text-gray-500 mb-4 line-clamp-2">{template.description}</p>
 
-            <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
+            <div className="flex items-center gap-4 text-xs text-gray-500 mb-4">
               <span className="flex items-center gap-1">
                 <MessageSquare className="w-3.5 h-3.5" />
                 {template.messages} messages
@@ -964,12 +1032,12 @@ function TemplatesTab({
             <div className="flex items-center justify-between">
               <span
                 className={`text-xs px-2.5 py-1 rounded-full ${
-                  template.isDefault ? "bg-slate-200 text-slate-600" : "bg-cyan-100 text-cyan-700"
+                  template.isDefault ? "bg-slate-200 text-gray-600" : "bg-blue-100 text-[#0052CC]"
                 }`}
               >
                 {template.isDefault ? "Default" : "Custom"}
               </span>
-              <span className="text-xs text-slate-500">Used {template.usedCount} times</span>
+              <span className="text-xs text-gray-500">Used {template.usedCount} times</span>
             </div>
           </div>
         ))}
@@ -998,11 +1066,11 @@ function CustomerFeedbackTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Customer Feedback</h1>
-          <p className="text-slate-500 mt-1">Monitor customer sentiment and manage reviews</p>
+          <h1 className="text-2xl font-bold text-gray-800">Customer Feedback</h1>
+          <p className="text-gray-500 mt-1">Monitor customer sentiment and manage reviews</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="gap-2 bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+          <Button variant="outline" className="gap-2 bg-white border-blue-100 text-gray-600 hover:bg-blue-50">
             <Download className="w-4 h-4" />
             Export
           </Button>
@@ -1015,44 +1083,44 @@ function CustomerFeedbackTab() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-slate-500">Total Feedback</span>
-            <MessageSquare className="w-5 h-5 text-teal-500" />
+            <span className="text-sm text-gray-500">Total Feedback</span>
+            <MessageSquare className="w-5 h-5 text-[#0066FF]" />
           </div>
-          <p className="text-3xl font-bold text-slate-800">{stats.total}</p>
+          <p className="text-3xl font-bold text-gray-800">{stats.total}</p>
           <p className="text-xs text-emerald-600 mt-1">+12 this week</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-slate-500">Positive</span>
+            <span className="text-sm text-gray-500">Positive</span>
             <ThumbsUp className="w-5 h-5 text-green-500" />
           </div>
-          <p className="text-3xl font-bold text-slate-800">{stats.positive}</p>
+          <p className="text-3xl font-bold text-gray-800">{stats.positive}</p>
           <p className="text-xs text-green-500 mt-1">{Math.round((stats.positive / stats.total) * 100)}% rate</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-slate-500">Needs Attention</span>
+            <span className="text-sm text-gray-500">Needs Attention</span>
             <ThumbsDown className="w-5 h-5 text-red-500" />
           </div>
-          <p className="text-3xl font-bold text-slate-800">{stats.negative}</p>
+          <p className="text-3xl font-bold text-gray-800">{stats.negative}</p>
           <p className="text-xs text-red-500 mt-1">{stats.negative > 0 ? "Action required" : "All clear"}</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-slate-500">Google Reviews</span>
+            <span className="text-sm text-gray-500">Google Reviews</span>
             <Star className="w-5 h-5 text-amber-500" />
           </div>
-          <p className="text-3xl font-bold text-slate-800">{stats.googleReviews}</p>
+          <p className="text-3xl font-bold text-gray-800">{stats.googleReviews}</p>
           <p className="text-xs text-amber-500 mt-1">Generated this month</p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-slate-500">Rewards Sent</span>
+            <span className="text-sm text-gray-500">Rewards Sent</span>
             <Gift className="w-5 h-5 text-purple-500" />
           </div>
-          <p className="text-3xl font-bold text-slate-800">{stats.rewardsSent}</p>
+          <p className="text-3xl font-bold text-gray-800">{stats.rewardsSent}</p>
           <p className="text-xs text-purple-500 mt-1">Thank you rewards</p>
         </div>
       </div>
@@ -1065,8 +1133,8 @@ function CustomerFeedbackTab() {
             onClick={() => setFilter(sentiment)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               filter === sentiment
-                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25"
-                : "bg-slate-100 text-slate-600 hover:text-slate-800"
+                ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/25"
+                : "bg-blue-50 text-gray-600 hover:text-gray-800"
             }`}
           >
             {sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}
@@ -1076,7 +1144,7 @@ function CustomerFeedbackTab() {
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+          className="gap-2 bg-white border-blue-100 text-gray-600 hover:bg-blue-50"
         >
           <Filter className="w-4 h-4" />
           More Filters
@@ -1088,10 +1156,10 @@ function CustomerFeedbackTab() {
         {filteredFeedback.map((feedback) => (
           <div
             key={feedback.id}
-            className={`bg-white rounded-2xl border p-6 transition-all hover:shadow-lg ${
+            className={`bg-white rounded-2xl border p-6 transition-all hover:shadow-lg hover:shadow-blue-500/20 ${
               feedback.sentiment === "negative" && !feedback.resolved
                 ? "border-red-200 bg-red-50/50"
-                : "border-slate-200"
+                : "border-blue-100"
             }`}
           >
             <div className="flex items-start gap-4">
@@ -1117,11 +1185,11 @@ function CustomerFeedbackTab() {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <span className="text-sm font-medium text-slate-800">{feedback.phone}</span>
-                  <span className="text-xs text-slate-500">•</span>
-                  <span className="text-xs text-slate-500">{feedback.location}</span>
-                  <span className="text-xs text-slate-500">•</span>
-                  <span className="text-xs text-slate-500">{feedback.time}</span>
+                  <span className="text-sm font-medium text-gray-800">{feedback.phone}</span>
+                  <span className="text-xs text-gray-500">•</span>
+                  <span className="text-xs text-gray-500">{feedback.location}</span>
+                  <span className="text-xs text-gray-500">•</span>
+                  <span className="text-xs text-gray-500">{feedback.time}</span>
 
                   {feedback.escalated && (
                     <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
@@ -1135,7 +1203,7 @@ function CustomerFeedbackTab() {
                   )}
                 </div>
 
-                <p className="text-slate-800 mb-4">{feedback.message}</p>
+                <p className="text-gray-800 mb-4">{feedback.message}</p>
 
                 {/* Actions/Status Row */}
                 <div className="flex items-center gap-3 flex-wrap">
@@ -1161,7 +1229,7 @@ function CustomerFeedbackTab() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="ml-auto gap-1.5 bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                      className="ml-auto gap-1.5 bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       Request Review
@@ -1177,7 +1245,7 @@ function CustomerFeedbackTab() {
               </div>
 
               {/* Actions Menu */}
-              <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800 shrink-0">
+              <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800 shrink-0">
                 <MoreHorizontal className="w-4 h-4" />
               </Button>
             </div>
@@ -1188,17 +1256,17 @@ function CustomerFeedbackTab() {
       {/* Reward Settings Modal */}
       {showRewardModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl border border-slate-200 w-full max-w-lg overflow-hidden shadow-xl">
-            <div className="flex items-center justify-between p-6 border-b border-slate-200">
+          <div className="glass-card rounded-2xl border border-blue-100/50 w-full max-w-lg overflow-hidden shadow-xl">
+            <div className="flex items-center justify-between p-6 border-b border-blue-100">
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Reward Settings</h2>
-                <p className="text-sm text-slate-500 mt-1">Configure rewards for positive reviews</p>
+                <h2 className="text-xl font-bold text-gray-800">Reward Settings</h2>
+                <p className="text-sm text-gray-500 mt-1">Configure rewards for positive reviews</p>
               </div>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowRewardModal(false)}
-                className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800"
+                className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -1206,8 +1274,8 @@ function CustomerFeedbackTab() {
 
             <div className="p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Default Reward Type</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Default Reward Type</label>
+                <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                   <option>Discount Code (% off)</option>
                   <option>Fixed Amount Discount</option>
                   <option>Free Item/Service</option>
@@ -1218,38 +1286,38 @@ function CustomerFeedbackTab() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Discount Amount</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Discount Amount</label>
                 <div className="flex items-center gap-3">
                   <input
                     type="number"
                     defaultValue="15"
-                    className="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                    className="flex-1 px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all"
                   />
-                  <span className="text-slate-500">%</span>
+                  <span className="text-gray-500">%</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Thank You Message</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Thank You Message</label>
                 <textarea
                   rows={3}
                   defaultValue="Thank you for sharing your experience! Here's a special thank you from us. 🎁"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all resize-none"
                 />
               </div>
 
-              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-100">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                 <div>
-                  <p className="font-medium text-slate-800">Auto-send Rewards</p>
-                  <p className="text-sm text-slate-500">Automatically reward after Google review is posted</p>
+                  <p className="font-medium text-gray-800">Auto-send Rewards</p>
+                  <p className="text-sm text-gray-500">Automatically reward after Google review is posted</p>
                 </div>
-                <button className="w-12 h-7 rounded-full bg-teal-500 transition-colors">
+                <button className="w-12 h-7 rounded-full bg-[#0066FF] transition-colors">
                   <div className="w-5 h-5 rounded-full bg-white shadow-sm transform translate-x-6" />
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-200">
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-blue-100">
               <Button variant="ghost" onClick={() => setShowRewardModal(false)}>
                 Cancel
               </Button>
@@ -1270,18 +1338,18 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl border border-slate-200 w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
+      <div className="glass-card rounded-2xl border border-blue-100/50 w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-blue-100">
           <div>
-            <h2 className="text-xl font-bold text-slate-800">Create Campaign</h2>
-            <p className="text-sm text-slate-500 mt-1">Step {step} of 4</p>
+            <h2 className="text-xl font-bold text-gray-800">Create Campaign</h2>
+            <p className="text-sm text-gray-500 mt-1">Step {step} of 4</p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onClose}
-            className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800"
+            className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800"
           >
             <X className="w-5 h-5" />
           </Button>
@@ -1293,12 +1361,12 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
             {[1, 2, 3, 4].map((s) => (
               <div key={s} className="flex-1 flex items-center gap-2">
                 <div
-                  className={`h-1.5 flex-1 rounded-full transition-colors ${s <= step ? "bg-teal-500" : "bg-slate-200"}`}
+                  className={`h-1.5 flex-1 rounded-full transition-colors ${s <= step ? "bg-[#0066FF]" : "bg-slate-200"}`}
                 />
               </div>
             ))}
           </div>
-          <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
+          <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
             <span>Details</span>
             <span>Audience</span>
             <span>Template</span>
@@ -1311,52 +1379,52 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
           {step === 1 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Campaign Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Campaign Name</label>
                 <input
                   type="text"
                   placeholder="e.g., Q4 Engagement Check-in"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Campaign Type</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Campaign Type</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setCampaignType("one-time")}
                     className={`p-4 rounded-xl border-2 transition-all text-left ${
                       campaignType === "one-time"
-                        ? "border-teal-500 bg-teal-50"
-                        : "border-slate-200 hover:border-teal-300"
+                        ? "border-[#0066FF] bg-teal-50"
+                        : "border-blue-100 hover:border-blue-300"
                     }`}
                   >
                     <Zap
-                      className={`w-6 h-6 mb-2 ${campaignType === "one-time" ? "text-teal-500" : "text-slate-500"}`}
+                      className={`w-6 h-6 mb-2 ${campaignType === "one-time" ? "text-[#0066FF]" : "text-gray-500"}`}
                     />
-                    <p className="font-medium text-slate-800">One-time</p>
-                    <p className="text-sm text-slate-500 mt-1">Send once to selected audience</p>
+                    <p className="font-medium text-gray-800">One-time</p>
+                    <p className="text-sm text-gray-500 mt-1">Send once to selected audience</p>
                   </button>
                   <button
                     onClick={() => setCampaignType("recurring")}
                     className={`p-4 rounded-xl border-2 transition-all text-left ${
                       campaignType === "recurring"
-                        ? "border-teal-500 bg-teal-50"
-                        : "border-slate-200 hover:border-teal-300"
+                        ? "border-[#0066FF] bg-teal-50"
+                        : "border-blue-100 hover:border-blue-300"
                     }`}
                   >
                     <RefreshCw
-                      className={`w-6 h-6 mb-2 ${campaignType === "recurring" ? "text-teal-500" : "text-slate-500"}`}
+                      className={`w-6 h-6 mb-2 ${campaignType === "recurring" ? "text-[#0066FF]" : "text-gray-500"}`}
                     />
-                    <p className="font-medium text-slate-800">Recurring</p>
-                    <p className="text-sm text-slate-500 mt-1">Automatically repeat on schedule</p>
+                    <p className="font-medium text-gray-800">Recurring</p>
+                    <p className="text-sm text-gray-500 mt-1">Automatically repeat on schedule</p>
                   </button>
                 </div>
               </div>
 
               {campaignType === "recurring" && (
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Frequency</label>
-                  <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                  <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                     <option>Weekly</option>
                     <option>Bi-weekly</option>
                     <option>Monthly</option>
@@ -1365,17 +1433,17 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
                 </div>
               )}
 
-              <div className="flex items-center justify-between p-4 rounded-xl bg-slate-100">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                 <div className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 text-teal-500" />
+                  <Shield className="w-5 h-5 text-[#0066FF]" />
                   <div>
-                    <p className="font-medium text-slate-800">Require Approval</p>
-                    <p className="text-sm text-slate-500">Campaign must be approved before sending</p>
+                    <p className="font-medium text-gray-800">Require Approval</p>
+                    <p className="text-sm text-gray-500">Campaign must be approved before sending</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setRequiresApproval(!requiresApproval)}
-                  className={`w-12 h-7 rounded-full transition-colors ${requiresApproval ? "bg-teal-500" : "bg-slate-300"}`}
+                  className={`w-12 h-7 rounded-full transition-colors ${requiresApproval ? "bg-[#0066FF]" : "bg-slate-300"}`}
                 >
                   <div
                     className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform ${
@@ -1390,8 +1458,8 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Target Audience</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Target Audience</label>
+                <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                   <option>All Employees</option>
                   <option>Engineering</option>
                   <option>Sales</option>
@@ -1404,37 +1472,37 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
                 </select>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-100">
+              <div className="p-4 rounded-xl bg-blue-50">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="font-medium text-slate-800">Audience Preview</span>
-                  <span className="text-sm text-slate-500">1,247 recipients</span>
+                  <span className="font-medium text-gray-800">Audience Preview</span>
+                  <span className="text-sm text-gray-500">1,247 recipients</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Departments</span>
-                    <span className="font-medium text-slate-800">8</span>
+                    <span className="text-gray-500">Departments</span>
+                    <span className="font-medium text-gray-800">8</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Locations</span>
-                    <span className="font-medium text-slate-800">12</span>
+                    <span className="text-gray-500">Locations</span>
+                    <span className="font-medium text-gray-800">12</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Avg. Response Rate</span>
-                    <span className="font-medium text-slate-800">89%</span>
+                    <span className="text-gray-500">Avg. Response Rate</span>
+                    <span className="font-medium text-gray-800">89%</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Last Contacted</span>
-                    <span className="font-medium text-slate-800">14 days ago</span>
+                    <span className="text-gray-500">Last Contacted</span>
+                    <span className="font-medium text-gray-800">14 days ago</span>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Exclude (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Exclude (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g., contractors, interns"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all"
                 />
               </div>
             </div>
@@ -1443,23 +1511,23 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Select Template</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Template</label>
                 <div className="space-y-3">
                   {mockTemplates.slice(0, 4).map((template) => (
                     <label
                       key={template.id}
-                      className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 hover:border-teal-300 cursor-pointer transition-all"
+                      className="flex items-center gap-4 p-4 rounded-xl border border-blue-100 hover:border-blue-300 cursor-pointer transition-all"
                     >
-                      <input type="radio" name="template" className="w-4 h-4 text-teal-500" />
+                      <input type="radio" name="template" className="w-4 h-4 text-[#0066FF]" />
                       <div className="flex-1">
-                        <p className="font-medium text-slate-800">{template.name}</p>
-                        <p className="text-sm text-slate-500">{template.description}</p>
-                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
+                        <p className="font-medium text-gray-800">{template.name}</p>
+                        <p className="text-sm text-gray-500">{template.description}</p>
+                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                           <span>{template.messages} messages</span>
                           <span>{template.branches} branches</span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-800">
+                      <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-800">
                         Preview
                       </Button>
                     </label>
@@ -1471,28 +1539,28 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
 
           {step === 4 && (
             <div className="space-y-6">
-              <div className="p-6 rounded-xl bg-slate-100 space-y-4">
-                <h3 className="font-semibold text-slate-800">Campaign Summary</h3>
+              <div className="p-6 rounded-xl bg-blue-50 space-y-4">
+                <h3 className="font-semibold text-gray-800">Campaign Summary</h3>
                 <div className="grid gap-3 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Name</span>
-                    <span className="font-medium text-slate-800">Q4 Engagement Check-in</span>
+                    <span className="text-gray-500">Name</span>
+                    <span className="font-medium text-gray-800">Q4 Engagement Check-in</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Type</span>
-                    <span className="font-medium text-slate-800 capitalize">{campaignType}</span>
+                    <span className="text-gray-500">Type</span>
+                    <span className="font-medium text-gray-800 capitalize">{campaignType}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Audience</span>
-                    <span className="font-medium text-slate-800">All Employees (1,247)</span>
+                    <span className="text-gray-500">Audience</span>
+                    <span className="font-medium text-gray-800">All Employees (1,247)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Template</span>
-                    <span className="font-medium text-slate-800">Quarterly Pulse</span>
+                    <span className="text-gray-500">Template</span>
+                    <span className="font-medium text-gray-800">Quarterly Pulse</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Requires Approval</span>
-                    <span className="font-medium text-slate-800">{requiresApproval ? "Yes" : "No"}</span>
+                    <span className="text-gray-500">Requires Approval</span>
+                    <span className="font-medium text-gray-800">{requiresApproval ? "Yes" : "No"}</span>
                   </div>
                 </div>
               </div>
@@ -1513,7 +1581,7 @@ function CampaignBuilder({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-slate-200">
+        <div className="flex items-center justify-between p-6 border-t border-blue-100">
           <Button variant="ghost" onClick={() => (step > 1 ? setStep(step - 1) : onClose())}>
             {step > 1 ? "Back" : "Cancel"}
           </Button>
@@ -1568,24 +1636,24 @@ function TemplateBuilder({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-xl z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl border border-slate-200 w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
+      <div className="glass-card rounded-2xl border border-blue-100/50 w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-blue-100">
           <div>
-            <h2 className="text-xl font-bold text-slate-800">
+            <h2 className="text-xl font-bold text-gray-800">
               {template ? `Edit: ${template.name}` : "Create Template"}
             </h2>
-            <p className="text-sm text-slate-500 mt-1">Design your conversation flow with branching logic</p>
+            <p className="text-sm text-gray-500 mt-1">Design your conversation flow with branching logic</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
               onClick={onClose}
-              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
             >
               Cancel
             </Button>
-            <Button className="gap-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 shadow-lg shadow-teal-500/25">
+            <Button className="gap-2 bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0066FF] shadow-lg shadow-blue-500/25">
               <CheckCircle2 className="w-4 h-4" />
               Save Template
             </Button>
@@ -1595,10 +1663,10 @@ function TemplateBuilder({
         {/* Content */}
         <div className="flex-1 overflow-hidden flex">
           {/* Left: Message List */}
-          <div className="w-80 border-r border-slate-200 p-4 overflow-auto">
+          <div className="w-80 border-r border-blue-100 p-4 overflow-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-slate-800">Messages</h3>
-              <Button variant="ghost" size="sm" className="gap-1 text-teal-600 hover:text-teal-800">
+              <h3 className="font-semibold text-gray-800">Messages</h3>
+              <Button variant="ghost" size="sm" className="gap-1 text-[#0066FF] hover:text-[#0052CC]">
                 <Plus className="w-4 h-4" />
                 Add
               </Button>
@@ -1607,18 +1675,18 @@ function TemplateBuilder({
               {messages.map((msg, index) => (
                 <div
                   key={msg.id}
-                  className="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:border-teal-300 cursor-pointer transition-all group"
+                  className="p-3 rounded-xl border border-blue-100 bg-blue-50 hover:border-blue-300 cursor-pointer transition-all group"
                 >
                   <div className="flex items-start gap-2">
-                    <GripVertical className="w-4 h-4 text-slate-400 shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" />
+                    <GripVertical className="w-4 h-4 text-gray-400 shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-teal-600">#{index + 1}</span>
-                        <span className="text-xs text-slate-500 capitalize">{msg.type}</span>
+                        <span className="text-xs font-medium text-[#0066FF]">#{index + 1}</span>
+                        <span className="text-xs text-gray-500 capitalize">{msg.type}</span>
                       </div>
-                      <p className="text-sm text-slate-800 line-clamp-2">{msg.content}</p>
+                      <p className="text-sm text-gray-800 line-clamp-2">{msg.content}</p>
                       {msg.branches.length > 0 && (
-                        <div className="flex items-center gap-1 mt-2 text-xs text-cyan-600">
+                        <div className="flex items-center gap-1 mt-2 text-xs text-[#0066FF]">
                           <GitBranch className="w-3 h-3" />
                           {msg.branches.length} branches
                         </div>
@@ -1634,28 +1702,28 @@ function TemplateBuilder({
           <div className="flex-1 p-6 overflow-auto">
             <div className="max-w-xl mx-auto space-y-6">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Template Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Template Name</label>
                 <input
                   type="text"
                   defaultValue={template?.name || ""}
                   placeholder="e.g., Weekly Check-in"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
                 <textarea
                   defaultValue={template?.description || ""}
                   placeholder="Brief description of this template's purpose"
                   rows={2}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Category</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                   <option>Engagement</option>
                   <option>Onboarding</option>
                   <option>Crisis</option>
@@ -1665,22 +1733,22 @@ function TemplateBuilder({
                 </select>
               </div>
 
-              <div className="pt-4 border-t border-slate-200">
-                <h4 className="font-semibold text-slate-800 mb-4">Message Editor</h4>
+              <div className="pt-4 border-t border-blue-100">
+                <h4 className="font-semibold text-gray-800 mb-4">Message Editor</h4>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Message Content</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Message Content</label>
                     <textarea
                       defaultValue={messages[0].content}
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none font-mono text-sm"
+                      className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all resize-none font-mono text-sm"
                     />
                     <div className="flex flex-wrap gap-2 mt-2">
-                      <span className="text-xs text-slate-500">Variables:</span>
+                      <span className="text-xs text-gray-500">Variables:</span>
                       {["{{first_name}}", "{{company}}", "{{department}}", "{{manager}}"].map((v) => (
                         <button
                           key={v}
-                          className="text-xs px-2 py-1 rounded-md bg-teal-100 text-teal-700 hover:bg-teal-200 transition-colors"
+                          className="text-xs px-2 py-1 rounded-md bg-blue-100 text-[#0052CC] hover:bg-teal-200 transition-colors"
                         >
                           {v}
                         </button>
@@ -1690,64 +1758,64 @@ function TemplateBuilder({
 
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-slate-700">Branching Logic</label>
-                      <Button variant="ghost" size="sm" className="gap-1 text-xs text-cyan-600 hover:text-cyan-800">
+                      <label className="block text-sm font-medium text-gray-700">Branching Logic</label>
+                      <Button variant="ghost" size="sm" className="gap-1 text-xs text-[#0066FF] hover:text-[#0052CC]">
                         <Plus className="w-3 h-3" />
                         Add Branch
                       </Button>
                     </div>
                     <div className="space-y-2">
-                      <div className="p-3 rounded-lg border border-slate-200 bg-slate-50">
+                      <div className="p-3 rounded-lg border border-blue-100 bg-blue-50">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium text-slate-500">IF response is</span>
+                          <span className="text-xs font-medium text-gray-500">IF response is</span>
                           <input
                             type="text"
                             defaultValue="1-4"
-                            className="w-20 px-2 py-1 text-xs rounded border border-slate-200 bg-white"
+                            className="w-20 px-2 py-1 text-xs rounded border border-blue-100 bg-white"
                           />
                         </div>
                         <div className="flex items-center gap-2">
-                          <ArrowRight className="w-4 h-4 text-cyan-500" />
+                          <ArrowRight className="w-4 h-4 text-[#0066FF]" />
                           <input
                             type="text"
                             defaultValue="I hear you. What's been the biggest challenge?"
-                            className="flex-1 px-2 py-1 text-xs rounded border border-slate-200 bg-white"
+                            className="flex-1 px-2 py-1 text-xs rounded border border-blue-100 bg-white"
                           />
                         </div>
                       </div>
-                      <div className="p-3 rounded-lg border border-slate-200 bg-slate-50">
+                      <div className="p-3 rounded-lg border border-blue-100 bg-blue-50">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium text-slate-500">IF response is</span>
+                          <span className="text-xs font-medium text-gray-500">IF response is</span>
                           <input
                             type="text"
                             defaultValue="5-7"
-                            className="w-20 px-2 py-1 text-xs rounded border border-slate-200 bg-white"
+                            className="w-20 px-2 py-1 text-xs rounded border border-blue-100 bg-white"
                           />
                         </div>
                         <div className="flex items-center gap-2">
-                          <ArrowRight className="w-4 h-4 text-cyan-500" />
+                          <ArrowRight className="w-4 h-4 text-[#0066FF]" />
                           <input
                             type="text"
                             defaultValue="Thanks for sharing. Anything specific on your mind?"
-                            className="flex-1 px-2 py-1 text-xs rounded border border-slate-200 bg-white"
+                            className="flex-1 px-2 py-1 text-xs rounded border border-blue-100 bg-white"
                           />
                         </div>
                       </div>
-                      <div className="p-3 rounded-lg border border-slate-200 bg-slate-50">
+                      <div className="p-3 rounded-lg border border-blue-100 bg-blue-50">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium text-slate-500">IF response is</span>
+                          <span className="text-xs font-medium text-gray-500">IF response is</span>
                           <input
                             type="text"
                             defaultValue="8-10"
-                            className="w-20 px-2 py-1 text-xs rounded border border-slate-200 bg-white"
+                            className="w-20 px-2 py-1 text-xs rounded border border-blue-100 bg-white"
                           />
                         </div>
                         <div className="flex items-center gap-2">
-                          <ArrowRight className="w-4 h-4 text-cyan-500" />
+                          <ArrowRight className="w-4 h-4 text-[#0066FF]" />
                           <input
                             type="text"
                             defaultValue="That's great to hear! What's been going well?"
-                            className="flex-1 px-2 py-1 text-xs rounded border border-slate-200 bg-white"
+                            className="flex-1 px-2 py-1 text-xs rounded border border-blue-100 bg-white"
                           />
                         </div>
                       </div>
@@ -1816,50 +1884,50 @@ function AnalyticsTab() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Analytics</h1>
-          <p className="text-slate-500 mt-1">Deep insights into employee sentiment and engagement trends</p>
+          <h1 className="text-2xl font-bold text-gray-800">Analytics</h1>
+          <p className="text-gray-500 mt-1">Deep insights into employee sentiment and engagement trends</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2 bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+          <Button variant="outline" className="gap-2 bg-white border-blue-100 text-gray-600 hover:bg-blue-50">
             <Download className="w-4 h-4" />
             Export Report
           </Button>
-          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
-            <Calendar className="w-4 h-4 text-slate-400" />
-            <span className="text-sm text-slate-600">Last 12 months</span>
-            <ChevronDown className="w-4 h-4 text-slate-400" />
+          <div className="flex items-center gap-2 bg-white border border-blue-100 rounded-xl px-3 py-2">
+            <Calendar className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-600">Last 12 months</span>
+            <ChevronDown className="w-4 h-4 text-gray-400" />
           </div>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <p className="text-sm text-slate-500 mb-1">Avg. Sentiment Score</p>
-          <p className="text-3xl font-bold text-slate-800">
-            8.2<span className="text-lg text-slate-400">/10</span>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
+          <p className="text-sm text-gray-500 mb-1">Avg. Sentiment Score</p>
+          <p className="text-3xl font-bold text-gray-800">
+            8.2<span className="text-lg text-gray-400">/10</span>
           </p>
           <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
             <TrendingUp className="w-3 h-3" /> +0.4 from last month
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <p className="text-sm text-slate-500 mb-1">Total Conversations</p>
-          <p className="text-3xl font-bold text-slate-800">4,892</p>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
+          <p className="text-sm text-gray-500 mb-1">Total Conversations</p>
+          <p className="text-3xl font-bold text-gray-800">4,892</p>
           <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
             <TrendingUp className="w-3 h-3" /> +312 this month
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <p className="text-sm text-slate-500 mb-1">Issues Resolved</p>
-          <p className="text-3xl font-bold text-slate-800">847</p>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
+          <p className="text-sm text-gray-500 mb-1">Issues Resolved</p>
+          <p className="text-3xl font-bold text-gray-800">847</p>
           <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
             <TrendingUp className="w-3 h-3" /> 94% resolution rate
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <p className="text-sm text-slate-500 mb-1">Retention Risk Alerts</p>
-          <p className="text-3xl font-bold text-slate-800">12</p>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm">
+          <p className="text-sm text-gray-500 mb-1">Retention Risk Alerts</p>
+          <p className="text-3xl font-bold text-gray-800">12</p>
           <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
             <TrendingDown className="w-3 h-3" /> 3 new this week
           </p>
@@ -1869,8 +1937,8 @@ function AnalyticsTab() {
       {/* Charts Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Sentiment Over Time */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-slate-800 mb-4">Sentiment Over Time</h3>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+          <h3 className="font-semibold text-gray-800 mb-4">Sentiment Over Time</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={sentimentData}>
@@ -1930,8 +1998,8 @@ function AnalyticsTab() {
         </div>
 
         {/* Response Rate Trends */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-slate-800 mb-4">Response Rate Trends</h3>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+          <h3 className="font-semibold text-gray-800 mb-4">Response Rate Trends</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={responseRateData}>
@@ -1967,8 +2035,8 @@ function AnalyticsTab() {
         </div>
 
         {/* Department Comparison */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-slate-800 mb-4">Department Health Scores</h3>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+          <h3 className="font-semibold text-gray-800 mb-4">Department Health Scores</h3>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={departmentData} layout="vertical">
@@ -2009,8 +2077,8 @@ function AnalyticsTab() {
         </div>
 
         {/* Theme Analysis */}
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-slate-800 mb-4">Theme Distribution</h3>
+        <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+          <h3 className="font-semibold text-gray-800 mb-4">Theme Distribution</h3>
           <div className="h-72 flex items-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -2042,7 +2110,7 @@ function AnalyticsTab() {
               {themeData.map((item) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-xs text-slate-600">{item.name}</span>
+                  <span className="text-xs text-gray-600">{item.name}</span>
                 </div>
               ))}
             </div>
@@ -2069,22 +2137,22 @@ function SettingsTab() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
-        <p className="text-slate-500 mt-1">Manage your LoopSync workspace configuration</p>
+        <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
+        <p className="text-gray-500 mt-1">Manage your CORO workspace configuration</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Settings Navigation */}
         <div className="lg:w-64 shrink-0">
-          <div className="bg-white rounded-2xl border border-slate-200 p-2 shadow-sm">
+          <div className="glass-card rounded-2xl border border-blue-100/50 p-2 shadow-sm">
             {settingsTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveSettingsTab(tab.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   activeSettingsTab === tab.id
-                    ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25"
-                    : "text-slate-600 hover:bg-slate-50"
+                    ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/25"
+                    : "text-gray-600 hover:bg-blue-50"
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -2098,20 +2166,20 @@ function SettingsTab() {
         <div className="flex-1 space-y-6">
           {activeSettingsTab === "general" && (
             <>
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Company Information</h3>
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Company Information</h3>
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
                     <input
                       type="text"
                       defaultValue="Acme Corporation"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Industry</label>
-                    <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+                    <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                       <option>Technology</option>
                       <option>Healthcare</option>
                       <option>Finance</option>
@@ -2120,8 +2188,8 @@ function SettingsTab() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Company Size</label>
-                    <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Company Size</label>
+                    <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                       <option>1-50 employees</option>
                       <option>51-200 employees</option>
                       <option>201-500 employees</option>
@@ -2130,8 +2198,8 @@ function SettingsTab() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Timezone</label>
-                    <select className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                    <select className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#0066FF]/20 focus:border-[#0066FF] transition-all">
                       <option>Pacific Time (PT)</option>
                       <option>Mountain Time (MT)</option>
                       <option>Central Time (CT)</option>
@@ -2141,18 +2209,18 @@ function SettingsTab() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Coro Settings</h3>
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Coro Settings</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Your Coro Number</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Coro Number</label>
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-mono">
+                      <div className="flex-1 px-4 py-3 rounded-xl border border-blue-100 bg-blue-50 text-gray-800 font-mono">
                         (555) 123-CORO
                       </div>
                       <Button
                         variant="outline"
-                        className="gap-2 bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                        className="gap-2 bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
                       >
                         <Copy className="w-4 h-4" />
                         Copy
@@ -2160,20 +2228,20 @@ function SettingsTab() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">Employee Enrollment Code</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Employee Enrollment Code</label>
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 font-mono">
+                      <div className="flex-1 px-4 py-3 rounded-xl border border-blue-100 bg-blue-50 text-gray-800 font-mono">
                         ACME2024
                       </div>
                       <Button
                         variant="outline"
-                        className="gap-2 bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                        className="gap-2 bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
                       >
                         <RefreshCw className="w-4 h-4" />
                         Regenerate
                       </Button>
                     </div>
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-gray-500 mt-2">
                       Employees text this code to Coro to start their check-ins
                     </p>
                   </div>
@@ -2183,8 +2251,8 @@ function SettingsTab() {
           )}
 
           {activeSettingsTab === "notifications" && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-800 mb-6">Notification Preferences</h3>
+            <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+              <h3 className="font-semibold text-gray-800 mb-6">Notification Preferences</h3>
               <div className="space-y-4">
                 {[
                   {
@@ -2211,14 +2279,14 @@ function SettingsTab() {
                 ].map((item) => (
                   <div
                     key={item.title}
-                    className="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors"
+                    className="flex items-center justify-between p-4 rounded-xl bg-blue-50 hover:bg-blue-50 transition-colors"
                   >
                     <div>
-                      <p className="font-medium text-slate-800">{item.title}</p>
-                      <p className="text-sm text-slate-500">{item.desc}</p>
+                      <p className="font-medium text-gray-800">{item.title}</p>
+                      <p className="text-sm text-gray-500">{item.desc}</p>
                     </div>
                     <button
-                      className={`w-12 h-7 rounded-full transition-colors ${item.enabled ? "bg-teal-500" : "bg-slate-300"}`}
+                      className={`w-12 h-7 rounded-full transition-colors ${item.enabled ? "bg-[#0066FF]" : "bg-slate-300"}`}
                     >
                       <div
                         className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform ${item.enabled ? "translate-x-6" : "translate-x-1"}`}
@@ -2231,10 +2299,10 @@ function SettingsTab() {
           )}
 
           {activeSettingsTab === "team" && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-semibold text-slate-800">Team Members</h3>
-                <Button className="gap-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 shadow-lg shadow-teal-500/25">
+                <h3 className="font-semibold text-gray-800">Team Members</h3>
+                <Button className="gap-2 bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0066FF] shadow-lg shadow-blue-500/25">
                   <UserPlus className="w-4 h-4" />
                   Invite Member
                 </Button>
@@ -2245,14 +2313,14 @@ function SettingsTab() {
                   { name: "Sarah Smith", email: "sarah@company.com", role: "Manager", avatar: "SS" },
                   { name: "Mike Johnson", email: "mike@company.com", role: "Viewer", avatar: "MJ" },
                 ].map((member) => (
-                  <div key={member.email} className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+                  <div key={member.email} className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0066FF] to-[#0052CC] flex items-center justify-center">
                         <span className="text-sm font-semibold text-white">{member.avatar}</span>
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">{member.name}</p>
-                        <p className="text-sm text-slate-500">{member.email}</p>
+                        <p className="font-medium text-gray-800">{member.name}</p>
+                        <p className="text-sm text-gray-500">{member.email}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -2262,12 +2330,12 @@ function SettingsTab() {
                             ? "bg-purple-100 text-purple-700"
                             : member.role === "Manager"
                               ? "bg-blue-100 text-blue-700"
-                              : "bg-slate-200 text-slate-600"
+                              : "bg-slate-200 text-gray-600"
                         }`}
                       >
                         {member.role}
                       </span>
-                      <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-slate-500 hover:text-slate-800">
+                      <Button variant="ghost" size="sm" className="w-8 h-8 p-0 text-gray-500 hover:text-gray-800">
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </div>
@@ -2278,8 +2346,8 @@ function SettingsTab() {
           )}
 
           {activeSettingsTab === "integrations" && (
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-              <h3 className="font-semibold text-slate-800 mb-6">Connected Integrations</h3>
+            <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+              <h3 className="font-semibold text-gray-800 mb-6">Connected Integrations</h3>
               <div className="space-y-3">
                 {[
                   { name: "Slack", desc: "Send alerts and summaries to Slack channels", connected: true, icon: "💬" },
@@ -2300,23 +2368,23 @@ function SettingsTab() {
                 ].map((integration) => (
                   <div
                     key={integration.name}
-                    className="flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors"
+                    className="flex items-center justify-between p-4 rounded-xl border border-blue-100 hover:border-blue-200 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl">
+                      <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl">
                         {integration.icon}
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">{integration.name}</p>
-                        <p className="text-sm text-slate-500">{integration.desc}</p>
+                        <p className="font-medium text-gray-800">{integration.name}</p>
+                        <p className="text-sm text-gray-500">{integration.desc}</p>
                       </div>
                     </div>
                     <Button
                       variant={integration.connected ? "outline" : "default"}
                       className={
                         integration.connected
-                          ? "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
-                          : "bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 shadow-lg shadow-teal-500/25"
+                          ? "bg-white border-blue-100 text-gray-700 hover:bg-blue-50"
+                          : "bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0066FF] shadow-lg shadow-blue-500/25"
                       }
                     >
                       {integration.connected ? "Configure" : "Connect"}
@@ -2329,56 +2397,56 @@ function SettingsTab() {
 
           {activeSettingsTab === "security" && (
             <div className="space-y-6">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Security Settings</h3>
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Security Settings</h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
-                        <Shield className="w-5 h-5 text-teal-600" />
+                      <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <Shield className="w-5 h-5 text-[#0066FF]" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">Two-Factor Authentication</p>
-                        <p className="text-sm text-slate-500">Add an extra layer of security to your account</p>
+                        <p className="font-medium text-gray-800">Two-Factor Authentication</p>
+                        <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
                       </div>
                     </div>
-                    <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+                    <Button variant="outline" className="bg-white border-blue-100 text-gray-700 hover:bg-blue-50">
                       Enable
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
                         <Key className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">API Keys</p>
-                        <p className="text-sm text-slate-500">Manage API keys for integrations</p>
+                        <p className="font-medium text-gray-800">API Keys</p>
+                        <p className="text-sm text-gray-500">Manage API keys for integrations</p>
                       </div>
                     </div>
-                    <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+                    <Button variant="outline" className="bg-white border-blue-100 text-gray-700 hover:bg-blue-50">
                       Manage
                     </Button>
                   </div>
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
                         <Globe className="w-5 h-5 text-purple-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">SSO Configuration</p>
-                        <p className="text-sm text-slate-500">Set up Single Sign-On with your identity provider</p>
+                        <p className="font-medium text-gray-800">SSO Configuration</p>
+                        <p className="text-sm text-gray-500">Set up Single Sign-On with your identity provider</p>
                       </div>
                     </div>
-                    <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+                    <Button variant="outline" className="bg-white border-blue-100 text-gray-700 hover:bg-blue-50">
                       Configure
                     </Button>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Data Privacy</h3>
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Data Privacy</h3>
                 <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
@@ -2397,9 +2465,9 @@ function SettingsTab() {
 
           {activeSettingsTab === "billing" && (
             <div className="space-y-6">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Current Plan</h3>
-                <div className="p-6 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white">
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Current Plan</h3>
+                <div className="p-6 rounded-xl bg-gradient-to-br from-[#0066FF] to-[#0052CC] text-white">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-lg font-semibold">Enterprise Plan</span>
                     <span className="px-3 py-1 bg-white/20 rounded-full text-sm">Active</span>
@@ -2411,42 +2479,42 @@ function SettingsTab() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Payment Method</h3>
-                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200">
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Payment Method</h3>
+                <div className="flex items-center justify-between p-4 rounded-xl border border-blue-100">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-8 rounded bg-slate-800 flex items-center justify-center">
                       <span className="text-white text-xs font-bold">VISA</span>
                     </div>
                     <div>
-                      <p className="font-medium text-slate-800">•••• •••• •••• 4242</p>
-                      <p className="text-sm text-slate-500">Expires 12/2025</p>
+                      <p className="font-medium text-gray-800">•••• •••• •••• 4242</p>
+                      <p className="text-sm text-gray-500">Expires 12/2025</p>
                     </div>
                   </div>
-                  <Button variant="outline" className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50">
+                  <Button variant="outline" className="bg-white border-blue-100 text-gray-700 hover:bg-blue-50">
                     Update
                   </Button>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-                <h3 className="font-semibold text-slate-800 mb-6">Billing History</h3>
+              <div className="glass-card rounded-2xl border border-blue-100/50 p-6 shadow-sm">
+                <h3 className="font-semibold text-gray-800 mb-6">Billing History</h3>
                 <div className="space-y-3">
                   {[
                     { date: "Dec 1, 2024", amount: "$2,499.00", status: "Paid" },
                     { date: "Nov 1, 2024", amount: "$2,499.00", status: "Paid" },
                     { date: "Oct 1, 2024", amount: "$2,499.00", status: "Paid" },
                   ].map((invoice, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-slate-50">
+                    <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-blue-50">
                       <div>
-                        <p className="font-medium text-slate-800">{invoice.date}</p>
-                        <p className="text-sm text-slate-500">{invoice.amount}</p>
+                        <p className="font-medium text-gray-800">{invoice.date}</p>
+                        <p className="text-sm text-gray-500">{invoice.amount}</p>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
                           {invoice.status}
                         </span>
-                        <Button variant="ghost" size="sm" className="gap-1 text-slate-500 hover:text-slate-800">
+                        <Button variant="ghost" size="sm" className="gap-1 text-gray-500 hover:text-gray-800">
                           <Download className="w-4 h-4" />
                           PDF
                         </Button>
@@ -2470,7 +2538,7 @@ function StatCard({
   change,
   changeType,
   icon: Icon,
-  gradient = "from-teal-500 to-cyan-600",
+  gradient = "from-[#0066FF] to-[#0052CC]",
 }: {
   title: string
   value: string
@@ -2481,9 +2549,9 @@ function StatCard({
   gradient?: string
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:border-slate-300 transition-all group">
+    <div className="glass-card rounded-2xl border border-blue-100/50 p-5 shadow-sm hover:shadow-lg hover:shadow-blue-500/20 hover:border-blue-200 transition-all group">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm text-slate-500">{title}</span>
+        <span className="text-sm text-gray-500">{title}</span>
         <div
           className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}
         >
@@ -2492,8 +2560,8 @@ function StatCard({
       </div>
       <div className="flex items-end justify-between">
         <div>
-          <span className="text-3xl font-bold text-slate-800">{value}</span>
-          {suffix && <span className="text-lg text-slate-400">{suffix}</span>}
+          <span className="text-3xl font-bold text-gray-800">{value}</span>
+          {suffix && <span className="text-lg text-gray-400">{suffix}</span>}
         </div>
         <div
           className={`flex items-center gap-1 text-sm font-semibold px-2 py-1 rounded-full ${

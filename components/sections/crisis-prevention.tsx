@@ -112,13 +112,13 @@ export function CrisisPreventionSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <ScrollAnimation className="text-center mb-12">
-          <span className="text-sm font-semibold text-orange-600 uppercase tracking-wide">
+          <span className="text-sm font-semibold text-[#0066FF] uppercase tracking-wide">
             Real Problems, Real Solutions
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight">
-            The Crises LoopSync Prevents
+          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
+            The Crises CORO Prevents
           </h2>
-          <p className="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
             These aren't hypotheticals. These are the crises that keep executives up at night — from toxic culture to
             customer churn.
           </p>
@@ -133,7 +133,7 @@ export function CrisisPreventionSection() {
                 onClick={() => setActiveCrisis(c.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeCrisis === c.id
-                    ? "bg-slate-900 text-white shadow-lg scale-105"
+                    ? "bg-gradient-to-br from-[#0066FF] to-[#0052CC] text-white shadow-lg scale-105"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
@@ -148,11 +148,11 @@ export function CrisisPreventionSection() {
         <ScrollAnimation delay={0.2}>
           <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 lg:p-10 mb-8">
             <div className="grid md:grid-cols-2 gap-8">
-              {/* Without LoopSync */}
+              {/* Without CORO */}
               <div className="p-6 rounded-xl bg-white border border-red-100 hover:border-red-200 transition-colors">
-                <h4 className="font-semibold text-red-600 mb-2">Without LoopSync</h4>
-                <h5 className="text-lg font-semibold text-slate-900 mb-3">{crisis.without.title}</h5>
-                <p className="text-sm text-slate-600 mb-4">{crisis.without.description}</p>
+                <h4 className="font-semibold text-red-600 mb-2">Without CORO</h4>
+                <h5 className="text-lg font-semibold text-gray-900 mb-3">{crisis.without.title}</h5>
+                <p className="text-sm text-gray-600 mb-4">{crisis.without.description}</p>
                 <ul className="space-y-2 mb-6">
                   {crisis.without.points.map((point) => (
                     <li key={point} className="flex items-center gap-2 text-sm text-slate-600">
@@ -167,22 +167,22 @@ export function CrisisPreventionSection() {
                 </div>
               </div>
 
-              {/* With LoopSync */}
-              <div className="p-6 rounded-xl bg-gradient-to-br from-orange-50 to-rose-50 border border-orange-200 hover:border-orange-300 transition-colors">
-                <h4 className="font-semibold text-orange-600 mb-2">With LoopSync</h4>
-                <h5 className="text-lg font-semibold text-slate-900 mb-3">{crisis.with.title}</h5>
-                <p className="text-sm text-slate-600 mb-4">{crisis.with.description}</p>
+              {/* With CORO */}
+              <div className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-200 hover:border-blue-300 transition-colors">
+                <h4 className="font-semibold text-[#0066FF] mb-2">With CORO</h4>
+                <h5 className="text-lg font-semibold text-gray-900 mb-3">{crisis.with.title}</h5>
+                <p className="text-sm text-gray-600 mb-4">{crisis.with.description}</p>
                 <ul className="space-y-2 mb-6">
                   {crisis.with.points.map((point) => (
-                    <li key={point} className="flex items-center gap-2 text-sm text-slate-900">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                    <li key={point} className="flex items-center gap-2 text-sm text-gray-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF]" />
                       {point}
                     </li>
                   ))}
                 </ul>
-                <div className="pt-4 border-t border-orange-200">
-                  <p className="text-3xl font-bold text-orange-600">{crisis.with.stat}</p>
-                  <p className="text-xs text-slate-500">{crisis.with.statLabel}</p>
+                <div className="pt-4 border-t border-blue-200">
+                  <p className="text-3xl font-bold text-[#0066FF]">{crisis.with.stat}</p>
+                  <p className="text-xs text-gray-500">{crisis.with.statLabel}</p>
                 </div>
               </div>
             </div>
@@ -192,7 +192,7 @@ export function CrisisPreventionSection() {
         {/* CTA */}
         <ScrollAnimation delay={0.3} className="text-center">
           <p className="text-slate-600 mb-4">Which crisis are you trying to prevent?</p>
-          <Button className="bg-slate-900 hover:bg-slate-800 text-white group">
+          <Button className="bg-gradient-to-br from-[#0066FF] to-[#0052CC] hover:bg-blue-50/50 text-white group">
             Book a Demo
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>

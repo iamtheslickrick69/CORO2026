@@ -19,13 +19,13 @@ const newWayItems = [
 
 export function RevolutionSection() {
   return (
-    <section className="py-24 lg:py-32 bg-white">
+    <section className="py-24 lg:py-32 bg-gradient-to-b from-white to-blue-50/30">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <ScrollAnimation className="text-center mb-16">
-          <p className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-3">The Revolution</p>
-          <h2 className="text-3xl sm:text-4xl font-semibold text-slate-900 tracking-tight">
-            Old HR tools <span className="text-slate-400">vs.</span> LoopSync + Coro
+          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">The Revolution</p>
+          <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900 tracking-tight">
+            Old HR tools <span className="text-gray-400">vs.</span> CORO
           </h2>
         </ScrollAnimation>
 
@@ -53,22 +53,22 @@ export function RevolutionSection() {
             </div>
           </ScrollAnimation>
 
-          {/* New Way - Changed from orange to slate/silver gradient */}
+          {/* New Way - CORO approach */}
           <ScrollAnimation delay={0.2}>
             <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl transform group-hover:scale-[1.02] transition-transform duration-300" />
-              <div className="absolute inset-0 rounded-2xl border-2 border-slate-300/50 group-hover:border-slate-400 transition-colors" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0066FF] to-[#0052CC] rounded-2xl transform group-hover:scale-[1.02] transition-transform duration-300" />
+              <div className="absolute inset-0 rounded-2xl border-2 border-[#0066FF]/50 group-hover:border-[#3385FF] transition-colors" />
               <div className="relative p-8">
                 <div className="mb-6">
-                  <span className="text-xs font-medium text-slate-700 uppercase tracking-wider">With LoopSync</span>
+                  <span className="text-xs font-medium text-white/90 uppercase tracking-wider">With CORO</span>
                 </div>
                 <ul className="space-y-4">
                   {newWayItems.map((item, index) => (
                     <li key={item} className="flex items-start gap-3" style={{ animationDelay: `${index * 0.1}s` }}>
-                      <span className="mt-0.5 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
+                      <span className="mt-0.5 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                         <Check className="w-3.5 h-3.5 text-white" />
                       </span>
-                      <span className="text-slate-900 font-medium">{item}</span>
+                      <span className="text-white font-medium">{item}</span>
                     </li>
                   ))}
                 </ul>

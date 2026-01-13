@@ -1,45 +1,72 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, Users, UserX, HeartCrack, TrendingDown, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
+import { CalendlyModal } from "@/components/ui/calendly-modal"
 
-const crises = [
+interface CrisisData {
+  id: string
+  label: string
+  image: string
+  without: {
+    description: string
+    stat: string
+    statLabel: string
+  }
+  with: {
+    description: string
+    stat: string
+    statLabel: string
+  }
+}
+
+// Featured crisis (Broken Systems) - shown first as horizontal card
+const featuredCrisis: CrisisData = {
+  id: "systems",
+  label: "Broken Systems",
+  image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=80",
+  without: {
+    description: "They don't want another dashboard. They want to be heard.",
+    stat: "3 days",
+    statLabel: "Avg. email response time",
+  },
+  with: {
+    description: "Just text. No app. No login. No friction.",
+    stat: "3 min",
+    statLabel: "Avg. text response time",
+  },
+}
+
+// Other crises in 2-2 grid
+const crises: CrisisData[] = [
   {
     id: "harassment",
-    label: "Harassment Crisis",
-    icon: AlertTriangle,
+    label: "Harassment",
+    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80",
     without: {
-      title: "The Problem",
-      description: "Anonymous harassment claim. No paper trail. No pattern detection. No early warning.",
-      points: ["No documentation", "Fear of retaliation", "Delayed reporting", "Pattern blindness"],
+      description: "Victims stay silent for 14 months on average.",
       stat: "$200K+",
-      statLabel: "Avg. lawsuit cost",
+      statLabel: "When it finally surfaces",
     },
     with: {
-      title: "The Solution",
-      description: "Full conversation history. Timestamped evidence. Pattern detection alerts. Early intervention.",
-      points: ["Complete audit trail", "Anonymous reporting", "Real-time alerts", "Pattern recognition"],
-      stat: "72 hrs",
-      statLabel: "Average detection time",
+      description: "Coro breaks the silence.",
+      stat: "90%",
+      statLabel: "Early resolution",
     },
   },
   {
     id: "turnover",
-    label: "Turnover Risk",
-    icon: Users,
+    label: "Turnover",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
     without: {
-      title: "The Problem",
-      description: "Key employees leave without warning. Exit interviews reveal nothing actionable.",
-      points: ["No early signals", "Reactive only", "Lost institutional knowledge", "Hiring costs spike"],
+      description: "67% of employees who quit never told anyone.",
       stat: "33%",
-      statLabel: "Annual turnover",
+      statLabel: "Of your team, gone",
     },
     with: {
-      title: "The Solution",
-      description: "Sentiment tracking identifies at-risk employees. Proactive retention interventions.",
-      points: ["Early warning alerts", "Proactive outreach", "Retention playbooks", "Manager coaching"],
+      description: "Coro breaks the silence.",
       stat: "60%",
       statLabel: "Reduction in turnover",
     },
@@ -47,156 +74,195 @@ const crises = [
   {
     id: "toxic",
     label: "Toxic Manager",
-    icon: UserX,
+    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=800&q=80",
     without: {
-      title: "The Problem",
-      description: "One bad manager destroys team morale. HR finds out when everyone quits.",
-      points: ["Fear of speaking up", "Team-wide impact", "Delayed discovery", "Legal exposure"],
-      stat: "5x",
-      statLabel: "Higher quit rates",
+      description: "Everyone knows. No one says anything.",
+      stat: "1 manager",
+      statLabel: "= 12 resignations",
     },
     with: {
-      title: "The Solution",
-      description: "Anonymous feedback surfaces patterns. Early coaching or intervention.",
-      points: ["Safe reporting channel", "Pattern detection", "Manager scorecards", "Coaching triggers"],
+      description: "Coro breaks the silence.",
       stat: "30 days",
-      statLabel: "To intervention",
-    },
-  },
-  {
-    id: "trust",
-    label: "Broken Trust",
-    icon: HeartCrack,
-    without: {
-      title: "The Problem",
-      description: "Employees stop sharing concerns. Leadership operates blind.",
-      points: ["Silent workforce", "Hidden problems", "Surprise departures", "Culture decay"],
-      stat: "12%",
-      statLabel: "Survey participation",
-    },
-    with: {
-      title: "The Solution",
-      description: "Always-on anonymous channel rebuilds trust. Consistent engagement.",
-      points: ["98% engagement", "Continuous feedback", "Trust metrics", "Culture health score"],
-      stat: "85%",
-      statLabel: "Engagement rate",
+      statLabel: "To detection",
     },
   },
   {
     id: "churn",
     label: "Customer Churn",
-    icon: TrendingDown,
+    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
     without: {
-      title: "The Problem",
-      description: "Customers leave without feedback. NPS surveys ignored.",
-      points: ["Low response rates", "Delayed feedback", "No pattern detection", "Reactive support"],
+      description: "Customers don't complain. They just leave.",
       stat: "25%",
       statLabel: "Annual churn",
     },
     with: {
-      title: "The Solution",
-      description: "Proactive check-ins catch issues early. AI identifies churn signals.",
-      points: ["Proactive outreach", "Sentiment tracking", "Churn prediction", "Save campaigns"],
+      description: "Coro breaks the silence.",
       stat: "40%",
       statLabel: "Churn reduction",
     },
   },
 ]
 
+// Featured Crisis Card - Horizontal layout for hero position
+const FeaturedCrisisCard = ({ crisis }: { crisis: CrisisData }) => {
+  return (
+    <div className="group relative h-40 md:h-42 w-full cursor-pointer overflow-hidden rounded-xl shadow-lg">
+      {/* Background Image - Grayscale by default, color on hover */}
+      <div
+        className="absolute inset-0 transition-all duration-700 ease-out scale-100 grayscale group-hover:grayscale-0 group-hover:scale-105"
+        style={{
+          backgroundImage: `url(${crisis.image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40 transition-all duration-500 group-hover:from-black/80 group-hover:via-black/50 group-hover:to-black/30" />
+
+      {/* Content Container - Horizontal layout */}
+      <div className="relative z-10 flex h-full items-center p-6 md:p-8">
+        {/* Left side - Content */}
+        <div className="flex-1 max-w-2xl">
+          {/* WITHOUT CORO - Shows by default, hides on hover */}
+          <div className="transition-all duration-500 opacity-100 translate-y-0 group-hover:opacity-0 group-hover:-translate-y-4">
+            <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Without Coro</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+            <p className="text-sm text-gray-300 mb-3 leading-relaxed max-w-lg">{crisis.without.description}</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl md:text-4xl font-bold text-red-400">{crisis.without.stat}</p>
+              <p className="text-xs text-gray-400">{crisis.without.statLabel}</p>
+            </div>
+          </div>
+
+          {/* WITH CORO - Hidden by default, shows on hover */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-6 md:left-8 transition-all duration-500 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-[-50%]">
+            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">With Coro</span>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+            <p className="text-sm text-gray-200 mb-3 leading-relaxed max-w-lg">{crisis.with.description}</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl md:text-4xl font-bold text-emerald-400">{crisis.with.stat}</p>
+              <p className="text-xs text-gray-300">{crisis.with.statLabel}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right side - Arrow */}
+        <div className="hidden md:flex items-center justify-center">
+          <ArrowRight className="w-7 h-7 text-white/60 transition-all duration-500 group-hover:text-white group-hover:-rotate-45" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Crisis Card component - Simple CSS approach (for 2x2 grid)
+const CrisisCard = ({ crisis }: { crisis: CrisisData }) => {
+  return (
+    <div className="group relative h-60 w-full cursor-pointer overflow-hidden rounded-xl shadow-lg">
+      {/* Background Image - Grayscale by default, color on hover */}
+      <div
+        className="absolute inset-0 transition-all duration-700 ease-out scale-100 grayscale group-hover:grayscale-0 group-hover:scale-110"
+        style={{
+          backgroundImage: `url(${crisis.image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 transition-all duration-500 group-hover:from-black/80 group-hover:via-black/40 group-hover:to-black/10" />
+
+      {/* Content Container */}
+      <div className="relative z-10 flex h-full flex-col justify-between p-5">
+        {/* Top - Arrow */}
+        <div className="flex justify-end">
+          <ArrowRight className="w-5 h-5 text-white/60 transition-all duration-500 group-hover:text-white group-hover:-rotate-45" />
+        </div>
+
+        {/* Bottom - Content */}
+        <div>
+          {/* WITHOUT CORO - Shows by default, hides on hover */}
+          <div className="transition-all duration-500 opacity-100 translate-y-0 group-hover:opacity-0 group-hover:-translate-y-4">
+            <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Without Coro</span>
+            <h3 className="text-xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+            <p className="text-xs text-gray-300 mb-3 leading-relaxed">{crisis.without.description}</p>
+            <div className="pt-3 border-t border-white/20">
+              <p className="text-2xl font-bold text-red-400">{crisis.without.stat}</p>
+              <p className="text-xs text-gray-400">{crisis.without.statLabel}</p>
+            </div>
+          </div>
+
+          {/* WITH CORO - Hidden by default, shows on hover */}
+          <div className="absolute bottom-5 left-5 right-5 transition-all duration-500 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
+            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">With Coro</span>
+            <h3 className="text-xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+            <p className="text-xs text-gray-200 mb-3 leading-relaxed">{crisis.with.description}</p>
+            <div className="pt-3 border-t border-white/30">
+              <p className="text-2xl font-bold text-emerald-400">{crisis.with.stat}</p>
+              <p className="text-xs text-gray-300">{crisis.with.statLabel}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function CrisisPreventionSection() {
-  const [activeCrisis, setActiveCrisis] = useState("harassment")
-  const crisis = crises.find((c) => c.id === activeCrisis)!
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false)
 
   return (
     <section className="py-20 lg:py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <ScrollAnimation className="text-center mb-12">
+        <ScrollAnimation className="text-center mb-16">
           <span className="text-sm font-semibold text-[#0066FF] uppercase tracking-wide">
-            Real Problems, Real Solutions
+            The Problem
           </span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
-            The Crises CORO Prevents
+            The Cost of Silence
           </h2>
           <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            These aren't hypotheticals. These are the crises that keep executives up at night — from toxic culture to
-            customer churn.
+            Every crisis starts the same way: someone didn't speak up. Not because they didn't care — because no one was listening.
           </p>
         </ScrollAnimation>
 
-        {/* Crisis Tabs */}
+        {/* Crisis Cards Grid - 1-2-2 Layout */}
         <ScrollAnimation delay={0.1}>
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {crises.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveCrisis(c.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeCrisis === c.id
-                    ? "bg-gradient-to-br from-[#0066FF] to-[#0052CC] text-white shadow-lg scale-105"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
-              >
-                <c.icon className="w-4 h-4" />
-                {c.label}
-              </button>
+          {/* Featured Card - Full Width */}
+          <div className="mb-5">
+            <FeaturedCrisisCard crisis={featuredCrisis} />
+          </div>
+
+          {/* Row 2 - Two Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+            {crises.slice(0, 2).map((crisis) => (
+              <CrisisCard key={crisis.id} crisis={crisis} />
             ))}
           </div>
-        </ScrollAnimation>
 
-        {/* Comparison */}
-        <ScrollAnimation delay={0.2}>
-          <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 lg:p-10 mb-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Without CORO */}
-              <div className="p-6 rounded-xl bg-white border border-red-100 hover:border-red-200 transition-colors">
-                <h4 className="font-semibold text-red-600 mb-2">Without CORO</h4>
-                <h5 className="text-lg font-semibold text-gray-900 mb-3">{crisis.without.title}</h5>
-                <p className="text-sm text-gray-600 mb-4">{crisis.without.description}</p>
-                <ul className="space-y-2 mb-6">
-                  {crisis.without.points.map((point) => (
-                    <li key={point} className="flex items-center gap-2 text-sm text-slate-600">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-                <div className="pt-4 border-t border-red-100">
-                  <p className="text-3xl font-bold text-red-600">{crisis.without.stat}</p>
-                  <p className="text-xs text-slate-500">{crisis.without.statLabel}</p>
-                </div>
-              </div>
-
-              {/* With CORO */}
-              <div className="p-6 rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-200 hover:border-blue-300 transition-colors">
-                <h4 className="font-semibold text-[#0066FF] mb-2">With CORO</h4>
-                <h5 className="text-lg font-semibold text-gray-900 mb-3">{crisis.with.title}</h5>
-                <p className="text-sm text-gray-600 mb-4">{crisis.with.description}</p>
-                <ul className="space-y-2 mb-6">
-                  {crisis.with.points.map((point) => (
-                    <li key={point} className="flex items-center gap-2 text-sm text-gray-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#0066FF]" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-                <div className="pt-4 border-t border-blue-200">
-                  <p className="text-3xl font-bold text-[#0066FF]">{crisis.with.stat}</p>
-                  <p className="text-xs text-gray-500">{crisis.with.statLabel}</p>
-                </div>
-              </div>
-            </div>
+          {/* Row 3 - Two Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+            {crises.slice(2, 4).map((crisis) => (
+              <CrisisCard key={crisis.id} crisis={crisis} />
+            ))}
           </div>
         </ScrollAnimation>
 
         {/* CTA */}
         <ScrollAnimation delay={0.3} className="text-center">
           <p className="text-slate-600 mb-4">Which crisis are you trying to prevent?</p>
-          <Button className="bg-gradient-to-br from-[#0066FF] to-[#0052CC] hover:bg-blue-50/50 text-white group">
+          <Button
+            onClick={() => setIsCalendlyOpen(true)}
+            className="bg-gradient-to-br from-[#0066FF] to-[#0052CC] hover:opacity-90 text-white px-8 py-6 text-lg font-semibold whitespace-nowrap"
+          >
             Book a Demo
-            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </ScrollAnimation>
+
+        {/* Calendly Modal */}
+        <CalendlyModal isOpen={isCalendlyOpen} onClose={() => setIsCalendlyOpen(false)} />
       </div>
     </section>
   )

@@ -1,15 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
 
 const faqs = [
   {
-    question: "How does CORO protect employee anonymity?",
+    question: "How does Coro protect employee anonymity?",
     answer:
-      "CORO uses end-to-end encryption and a zero-knowledge architecture. Messages are processed by AI without ever linking to employee identities. Even CORO staff cannot see who sent what. We aggregate insights at minimum group sizes to prevent identification through deduction.",
+      "Coro uses end-to-end encryption and a zero-knowledge architecture. Messages are processed by AI without ever linking to employee identities. Even Coro staff cannot see who sent what. We aggregate insights at minimum group sizes to prevent identification through deduction.",
   },
   {
     question: "What if employees abuse the anonymous system?",
@@ -19,12 +24,12 @@ const faqs = [
   {
     question: "How is this different from regular employee surveys?",
     answer:
-      "Traditional surveys are periodic, cumbersome, and often ignored. CORO provides always-on, conversational feedback via SMS with 98% engagement rates. You get real-time insights instead of quarterly reports.",
+      "Traditional surveys are periodic, cumbersome, and often ignored. Coro provides always-on, conversational feedback via SMS with 80% engagement rates. You get real-time insights instead of quarterly reports.",
   },
   {
-    question: "What size companies benefit most from CORO?",
+    question: "What size companies benefit most from Coro?",
     answer:
-      "CORO works for organizations from 50 to 50,000+ employees. The ROI is especially strong for companies with distributed workforces, frontline workers, or multiple locations where traditional communication channels fail.",
+      "Coro works for organizations from 50 to 50,000+ employees. The ROI is especially strong for companies with distributed workforces, frontline workers, or multiple locations where traditional communication channels fail.",
   },
   {
     question: "How long does implementation take?",
@@ -39,58 +44,59 @@ const faqs = [
 ]
 
 export function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
-
   return (
     <section className="py-20 lg:py-32 bg-slate-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <ScrollAnimation className="text-center mb-12">
-          <span className="text-sm font-semibold text-[#0066FF] uppercase tracking-wide">FAQ</span>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight">
-            Questions?
-            <br />
-            We've Got Answers
-          </h2>
-        </ScrollAnimation>
-
-        {/* FAQ Accordion */}
-        <div className="space-y-3">
-          {faqs.map((faq, index) => (
-            <ScrollAnimation key={index} delay={index * 0.05}>
-              <div className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-blue-200 transition-colors">
-                <button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full flex items-center justify-between p-5 text-left"
-                >
-                  <span className="font-medium text-slate-900 pr-4">{faq.question}</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-300 ${
-                      openIndex === index ? "rotate-180 text-[#0066FF]" : ""
-                    }`}
-                  />
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    openIndex === index ? "max-h-96" : "max-h-0"
-                  }`}
-                >
-                  <div className="px-5 pb-5">
-                    <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
-                  </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+          {/* Left Column - Header & CTA */}
+          <ScrollAnimation>
+            <div className="flex gap-8 flex-col lg:sticky lg:top-32">
+              <div className="flex gap-4 flex-col">
+                <div>
+                  <Badge variant="outline" className="text-[#0066FF] border-[#0066FF]/30 bg-blue-50">
+                    FAQ
+                  </Badge>
+                </div>
+                <div className="flex gap-3 flex-col">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl tracking-tight max-w-xl text-left font-bold text-slate-900">
+                    Questions?
+                    <br />
+                    We've Got Answers
+                  </h2>
+                  <p className="text-lg max-w-xl lg:max-w-lg leading-relaxed text-slate-600 text-left">
+                    Everything you need to know about Coro's anonymous feedback platform.
+                    Can't find what you're looking for? Our team is here to help.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <Button className="bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:opacity-90 text-white px-6 py-5 text-base font-semibold whitespace-nowrap">
+                    Any Questions? Reach Out
+                  </Button>
                 </div>
               </div>
-            </ScrollAnimation>
-          ))}
-        </div>
+            </div>
+          </ScrollAnimation>
 
-        {/* Contact CTA */}
-        <ScrollAnimation delay={0.3} className="text-center mt-12">
-          <p className="text-slate-600 mb-4">Still have questions?</p>
-          <Button variant="outline" className="border-slate-300 hover:bg-slate-100 hover:border-blue-300 bg-white">
-            Contact Our Team
-          </Button>
-        </ScrollAnimation>
+          {/* Right Column - Accordion */}
+          <ScrollAnimation delay={0.1}>
+            <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
+              {faqs.map((faq, index) => (
+                <AccordionItem
+                  key={index}
+                  value={`item-${index}`}
+                  className="bg-white rounded-xl border border-slate-200 mb-3 px-1 data-[state=open]:border-blue-200 data-[state=open]:shadow-sm transition-all"
+                >
+                  <AccordionTrigger className="px-5 py-4 text-left font-medium text-slate-900 hover:no-underline hover:text-[#0066FF] transition-colors [&[data-state=open]]:text-[#0066FF]">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-5 pb-5 text-slate-600 leading-relaxed">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </ScrollAnimation>
+        </div>
       </div>
     </section>
   )

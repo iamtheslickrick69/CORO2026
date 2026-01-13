@@ -3,12 +3,14 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, LogIn } from "lucide-react"
+import { LoginModal } from "./login-modal"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [activeLink, setActiveLink] = useState("home")
+  const [isLoginOpen, setIsLoginOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +26,7 @@ export function Header() {
   ]
 
   return (
+    <>
     <header
       className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${
         scrolled ? "top-2 translate-y-0" : "top-4 translate-y-0"
@@ -46,7 +49,7 @@ export function Header() {
             <div className="relative h-12 w-40 transition-all duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(0,102,255,0.6)]">
               <Image
                 src="/logo-standard.png"
-                alt="CORO"
+                alt="Coro"
                 fill
                 className="object-contain"
                 priority
@@ -73,6 +76,15 @@ export function Header() {
               </Link>
             ))}
           </nav>
+
+          {/* Login Button */}
+          <button
+            onClick={() => setIsLoginOpen(true)}
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 text-base font-semibold text-gray-700 hover:text-[#0066FF] bg-white/60 hover:bg-white rounded-xl border border-white/50 hover:border-[#0066FF]/30 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 ml-2"
+          >
+            <LogIn className="w-4 h-4" />
+            Login
+          </button>
 
           {/* Mobile Menu Button */}
           <button
@@ -109,11 +121,28 @@ export function Header() {
                     {link.label}
                   </Link>
                 ))}
+                {/* Mobile Login Button */}
+                <button
+                  onClick={() => {
+                    setIsLoginOpen(true)
+                    setMobileMenuOpen(false)
+                  }}
+                  className="stagger-item flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-gray-700 hover:bg-blue-50/50 hover:text-blue-600 transition-all active:scale-95"
+                  style={{ animationDelay: `${navLinks.length * 0.1}s` }}
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </button>
               </nav>
             </div>
           </div>
         </div>
       )}
+
     </header>
+
+    {/* Login Modal - rendered outside header to avoid transform containment issues */}
+    <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
+    </>
   )
 }

@@ -226,6 +226,31 @@
     }
   }
 
+  @keyframes shine-pulse {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+
+  --animate-shine-pulse: shine-pulse 14s infinite linear;
+
+  @keyframes border-beam {
+    0% {
+      offset-distance: 0%;
+    }
+    100% {
+      offset-distance: 100%;
+    }
+  }
+
+  --animate-border-beam: border-beam 8s infinite linear;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

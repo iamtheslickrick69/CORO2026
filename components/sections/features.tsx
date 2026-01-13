@@ -13,9 +13,9 @@ const features = [
     description:
       "AI-powered detection that catches emerging issues before they escalate. Real-time alerts on sentiment shifts, recurring themes, and risk signals.",
     metrics: [
-      { label: "Retention Risk:", value: "high", color: "text-red-500" },
-      { label: "Legal Exposure:", value: "medium", color: "text-amber-500" },
-      { label: "Team Health:", value: "low", color: "text-emerald-500" },
+      { label: "Retention Risk", value: "High", color: "bg-red-500" },
+      { label: "Legal Exposure", value: "Medium", color: "bg-amber-500" },
+      { label: "Team Health", value: "Good", color: "bg-emerald-500" },
     ],
   },
   {
@@ -23,121 +23,159 @@ const features = [
     icon: BarChart3,
     title: "Culture Health Score",
     category: "Analytics",
-    description: "Comprehensive dashboard showing real-time culture metrics across departments, teams, and locations.",
+    description: "Comprehensive dashboard showing real-time culture metrics across departments, teams, and locations. Track engagement, satisfaction, and sentiment over time.",
+    metrics: [
+      { label: "Overall Score", value: "78/100", color: "bg-blue-500" },
+      { label: "Trend", value: "+5%", color: "bg-emerald-500" },
+      { label: "Participation", value: "89%", color: "bg-blue-500" },
+    ],
   },
   {
     id: "tracker",
     icon: CheckSquare,
     title: "Action Tracker",
     category: "Accountability",
-    description: "Track every action item from insight to resolution. Never let feedback fall through the cracks.",
+    description: "Track every action item from insight to resolution. Never let feedback fall through the cracks. Assign owners and set deadlines.",
+    metrics: [
+      { label: "Open Items", value: "12", color: "bg-amber-500" },
+      { label: "Resolved", value: "47", color: "bg-emerald-500" },
+      { label: "Avg. Resolution", value: "3 days", color: "bg-blue-500" },
+    ],
   },
   {
     id: "outreach",
     icon: Target,
     title: "Targeted Outreach",
     category: "Proactive",
-    description: "Automatically reach out to at-risk employees or specific segments with personalized check-ins.",
+    description: "Automatically reach out to at-risk employees or specific segments with personalized check-ins. Smart scheduling for optimal engagement.",
+    metrics: [
+      { label: "Active Campaigns", value: "3", color: "bg-blue-500" },
+      { label: "Response Rate", value: "82%", color: "bg-emerald-500" },
+      { label: "At-Risk Flagged", value: "8", color: "bg-amber-500" },
+    ],
   },
   {
     id: "trends",
     icon: TrendingUp,
     title: "Trend Analysis",
     category: "Intelligence",
-    description: "Spot patterns across time, teams, and topics. See what's improving and what needs attention.",
+    description: "Spot patterns across time, teams, and topics. See what's improving and what needs attention. AI-powered insights surfaced automatically.",
+    metrics: [
+      { label: "Top Theme", value: "Workload", color: "bg-amber-500" },
+      { label: "Improving", value: "Communication", color: "bg-emerald-500" },
+      { label: "Watch", value: "Benefits", color: "bg-red-500" },
+    ],
   },
 ]
 
 export function FeaturesSection() {
   const [activeFeature, setActiveFeature] = useState("warning")
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const feature = features.find((f) => f.id === activeFeature)!
 
+  const handleFeatureChange = (id: string) => {
+    if (id === activeFeature) return
+    setIsTransitioning(true)
+    setTimeout(() => {
+      setActiveFeature(id)
+      setIsTransitioning(false)
+    }, 150)
+  }
+
   return (
-    <section className="py-20 lg:py-32 bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 lg:py-24 bg-slate-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <ScrollAnimation className="text-center mb-16">
+        <ScrollAnimation className="text-center mb-10">
           <span className="text-sm font-semibold text-[#0066FF] uppercase tracking-wide">Features</span>
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight text-balance">
             AI That Brings Humans Closer,
             <br />
             Not Further Apart
           </h2>
-          <p className="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
             By guaranteeing anonymity and surfacing truth, Coro builds the trust that brings teams together.
           </p>
         </ScrollAnimation>
 
-        {/* Features Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Feature List */}
-          <ScrollAnimation className="lg:col-span-1 space-y-3">
-            {features.map((f, index) => (
+        {/* Horizontal Tabs */}
+        <ScrollAnimation className="mb-8">
+          <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 px-2 scrollbar-hide">
+            {features.map((f) => (
               <button
                 key={f.id}
-                onClick={() => setActiveFeature(f.id)}
-                className={`stagger-item w-full text-left p-6 rounded-2xl transition-all duration-300 tilt-3d ${
+                onClick={() => handleFeatureChange(f.id)}
+                className={`group flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 whitespace-nowrap ${
                   activeFeature === f.id
-                    ? "bg-white border-2 border-blue-300 shadow-2xl shadow-blue-500/30 scale-[1.05] -translate-y-1"
-                    : "bg-white border border-slate-200 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1"
+                    ? "bg-white shadow-md border border-slate-200"
+                    : "hover:bg-white/60"
                 }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                      activeFeature === f.id
-                        ? "bg-gradient-to-br from-[#0066FF]/20 to-[#3385FF]/20 scale-110 rotate-3"
-                        : "bg-slate-100 group-hover:scale-110 group-hover:rotate-3"
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                    activeFeature === f.id
+                      ? "bg-blue-50"
+                      : "bg-slate-100 group-hover:bg-slate-50"
+                  }`}
+                >
+                  <f.icon
+                    className={`w-4 h-4 transition-colors duration-300 ${
+                      activeFeature === f.id ? "text-[#0066FF]" : "text-slate-400 group-hover:text-slate-600"
                     }`}
-                  >
-                    <f.icon className={`w-6 h-6 transition-all duration-300 ${activeFeature === f.id ? "text-[#0066FF] scale-110" : "text-slate-400"}`} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{f.title}</h4>
-                    <p className="text-xs text-slate-500">{f.category}</p>
-                  </div>
+                  />
                 </div>
+                <span
+                  className={`text-sm font-medium transition-colors duration-300 ${
+                    activeFeature === f.id ? "text-slate-900" : "text-slate-600 group-hover:text-slate-900"
+                  }`}
+                >
+                  {f.title}
+                </span>
               </button>
             ))}
-          </ScrollAnimation>
+          </div>
+        </ScrollAnimation>
 
-          {/* Feature Detail */}
-          <ScrollAnimation delay={0.2} className="lg:col-span-2">
-            <div className="bg-white rounded-2xl border border-slate-200 p-8 lg:p-10 h-full shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-100 flex items-center justify-center">
-                  <feature.icon className="w-6 h-6 text-[#0066FF]" />
-                </div>
-                <div>
-                  <span className="text-xs font-medium text-[#0066FF]">{feature.category}</span>
-                  <h3 className="text-xl font-semibold text-slate-900">{feature.title}</h3>
-                </div>
+        {/* Feature Content - Compact */}
+        <ScrollAnimation delay={0.1}>
+          <div
+            className={`transition-all duration-150 ${
+              isTransitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
+            }`}
+          >
+            {/* Header Row */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center border border-blue-200">
+                <feature.icon className="w-5 h-5 text-[#0066FF]" />
               </div>
-
-              <p className="text-slate-600 mb-8 leading-relaxed">{feature.description}</p>
-
-              {/* Mock UI for Early Warning */}
-              {feature.id === "warning" && feature.metrics && (
-                <div className="bg-slate-50 rounded-xl p-6 space-y-4">
-                  {feature.metrics.map((metric) => (
-                    <div key={metric.label} className="flex items-center justify-between">
-                      <span className="text-sm text-slate-600">{metric.label}</span>
-                      <span className={`text-sm font-semibold ${metric.color}`}>{metric.value}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Placeholder for other features */}
-              {feature.id !== "warning" && (
-                <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-6 h-32 flex items-center justify-center border border-blue-100">
-                  <p className="text-sm text-slate-500">Interactive preview coming soon</p>
-                </div>
-              )}
+              <div>
+                <span className="text-xs font-semibold text-[#0066FF] uppercase tracking-wide">
+                  {feature.category}
+                </span>
+                <h3 className="text-lg font-bold text-slate-900">{feature.title}</h3>
+              </div>
             </div>
-          </ScrollAnimation>
-        </div>
+
+            {/* Description */}
+            <p className="text-slate-600 mb-6 leading-relaxed max-w-3xl mx-auto text-center">{feature.description}</p>
+
+            {/* Metrics - Compact Row */}
+            {feature.metrics && (
+              <div className="flex flex-wrap justify-center gap-3">
+                {feature.metrics.map((metric) => (
+                  <div
+                    key={metric.label}
+                    className="bg-white rounded-lg px-4 py-3 border border-slate-200 flex items-center gap-3 hover:border-blue-200 transition-colors"
+                  >
+                    <div className={`w-2 h-2 rounded-full ${metric.color}`} />
+                    <span className="text-sm text-slate-500">{metric.label}</span>
+                    <span className="text-sm font-bold text-slate-900">{metric.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </ScrollAnimation>
       </div>
     </section>
   )

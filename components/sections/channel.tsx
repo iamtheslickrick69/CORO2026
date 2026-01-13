@@ -70,7 +70,7 @@ export function ChannelSection() {
                 </div>
               </div>
 
-              {/* SMS - CORO Blue */}
+              {/* SMS - Coro Blue */}
               <div>
                 <div className="flex justify-between mb-2">
                   <span className="text-sm font-medium text-gray-600">SMS</span>
@@ -129,10 +129,10 @@ export function ChannelSection() {
                   </div>
                 </div>
 
-                {/* SMS - CORO Blue */}
+                {/* SMS - Coro Blue */}
                 <div className="mb-8">
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm text-gray-500">CORO SMS</span>
+                    <span className="text-sm text-gray-500">Coro SMS</span>
                     <span className="text-sm font-semibold text-[#0066FF]">{activeOrg.sms}%</span>
                   </div>
                   <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
@@ -143,7 +143,7 @@ export function ChannelSection() {
                   </div>
                 </div>
 
-                {/* Improvement - CORO Blue */}
+                {/* Improvement - Coro Blue */}
                 <div className="text-center pt-6 border-t border-blue-100">
                   <span className="text-3xl font-bold text-[#0066FF]">+{activeOrg.sms - activeOrg.traditional}%</span>
                   <span className="text-sm text-gray-500 ml-2">improvement</span>

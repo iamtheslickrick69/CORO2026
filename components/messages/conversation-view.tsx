@@ -13,25 +13,38 @@ export function ConversationView() {
   const [inputValue, setInputValue] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const hasInitialized = useRef(false)
 
   // Get the active conversation
   const activeConversation = conversations.find((c) => c.id === activeConversationId)
 
-  // Scroll to bottom function
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  // Scroll to bottom function - scroll within container only, not the page
+  const scrollToBottom = (instant = false) => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight
+    }
   }
 
   // Mark messages as read and scroll to bottom when conversation changes
   useEffect(() => {
     if (activeConversation) {
-      scrollToBottom()
+      // Only scroll after initial mount to prevent page jump
+      if (hasInitialized.current) {
+        scrollToBottom()
+      } else {
+        // On first load, scroll instantly without animation
+        setTimeout(() => {
+          scrollToBottom(true)
+          hasInitialized.current = true
+        }, 100)
+      }
       // Only mark as read when the conversation ID changes
       if (activeConversation.unreadCount > 0) {
         markAsRead(activeConversation.id)
       }
     }
-  }, [activeConversationId, activeConversation, activeConversation?.unreadCount, scrollToBottom, markAsRead]) // Only depend on the ID changing
+  }, [activeConversationId, activeConversation?.unreadCount, markAsRead])
 
   // Handle sending a message
   const handleSend = async () => {
@@ -92,7 +105,7 @@ export function ConversationView() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-auto p-4 space-y-4">
+      <div ref={containerRef} className="flex-1 overflow-auto p-4 space-y-4">
         <AnimatePresence initial={false}>
           {activeConversation.messages.map((message) => (
             <motion.div

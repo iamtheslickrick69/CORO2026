@@ -11,6 +11,7 @@ import { OurPurposeSection } from "@/components/sections/our-purpose"
 import { SecuritySection } from "@/components/sections/security"
 import { FAQSection } from "@/components/sections/faq"
 import { CTASection } from "@/components/sections/cta"
+import { MobileChatSheet } from "@/components/ui/mobile-chat-sheet"
 
 export default function HomePage() {
   return (
@@ -30,6 +31,7 @@ export default function HomePage() {
         <CTASection />
       </main>
       <Footer />
+      <MobileChatSheet />
     </div>
   )
 }

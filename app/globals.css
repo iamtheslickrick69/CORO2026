@@ -468,3 +468,17 @@
 }
 
 /* Let Framer Motion handle all animations - no global CSS transition overrides */
+
+/* iOS Safe Area Support */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

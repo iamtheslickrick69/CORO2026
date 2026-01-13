@@ -45,7 +45,7 @@ const defaultSections = [
     links: [
       { name: "About", href: "#" },
       { name: "Careers", href: "#" },
-      { name: "Contact", href: "#" },
+      { name: "Contact", href: "mailto:nick@loopsync.io" },
     ],
   },
   {
@@ -102,6 +102,13 @@ export const Footer7 = ({
             <p className="text-sm text-slate-600 leading-relaxed">
               {description}
             </p>
+            {/* Contact Email */}
+            <div className="flex flex-col gap-1">
+              <p className="text-xs text-slate-500 font-medium">Contact Us</p>
+              <a href="mailto:nick@loopsync.io" className="text-sm text-[#0066FF] hover:underline font-medium">
+                nick@loopsync.io
+              </a>
+            </div>
             {/* CTA Button */}
             <Button className="bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:opacity-90 text-white px-5 py-2 text-sm font-semibold whitespace-nowrap">
               Book a Demo

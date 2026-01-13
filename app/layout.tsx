@@ -1,11 +1,18 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { DarkModeToggle } from '@/components/ui/dark-mode-toggle'
 import './globals.css'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+  display: "swap", // Prevents FOUT - shows fallback immediately, swaps when loaded
+});
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: 'Coro - Anonymous Employee Feedback Platform',
@@ -49,12 +56,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable}`}>
+      <body className="font-sans antialiased">
         {children}
-        <div className="fixed bottom-8 right-8 z-50">
-          <DarkModeToggle />
-        </div>
         <Analytics />
       </body>
     </html>

@@ -1,103 +1,138 @@
 "use client"
 
-import { Shield, Lock, UserX, Eye, CheckCircle2 } from "lucide-react"
+import { useEffect, useState, useRef } from "react"
+import { motion, useInView } from "framer-motion"
+import { Shield, Lock, Eye, ShieldCheck } from "lucide-react"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
 
+// Animated counter hook
+function useCounter(end: number, duration: number = 2000, startOnView: boolean = true) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+
+  useEffect(() => {
+    if (!startOnView || !isInView) return
+
+    let startTime: number
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp
+      const progress = Math.min((timestamp - startTime) / duration, 1)
+      setCount(Math.floor(progress * end))
+      if (progress < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [end, duration, isInView, startOnView])
+
+  return { count, ref }
+}
+
 export function DataPrivacySection() {
+  const breaches = useCounter(0, 1000)
+  const encryption = useCounter(256, 1500)
+
   return (
-    <section className="py-20 lg:py-32 bg-slate-900">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 lg:py-24 bg-slate-900">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <ScrollAnimation className="text-center mb-12">
-          <span className="text-sm font-semibold text-[#60A5FA] uppercase tracking-wide">Data Privacy</span>
-          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight text-balance">
-            We Created Coro So
-            <br />
-            <span className="text-[#3B82F6]">No One Profits From Your Data.</span>
+          <span className="text-xs font-semibold text-[#60A5FA] uppercase tracking-wider">Data Privacy</span>
+          <h2 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">
+            Your Data Stays <span className="text-[#3B82F6]">Yours.</span>
           </h2>
         </ScrollAnimation>
 
-        {/* Bento Grid */}
+        {/* Main 3 Cards */}
         <ScrollAnimation delay={0.1}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Featured Card - Your Data. Period. (spans 2 cols on lg) */}
-            <div className="lg:col-span-2 bg-gradient-to-br from-slate-800 to-slate-800/80 rounded-2xl p-8 border border-slate-700 hover:border-blue-500/40 transition-colors group">
-              <div className="flex items-start gap-5">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#3B82F6] to-[#2563EB] flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
-                  <Shield className="w-7 h-7 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-white mb-3">Your Data. Period.</h3>
-                  <p className="text-slate-300 leading-relaxed mb-6">
-                    Unlike other platforms, we don't sell data, share with third parties, or use your sensitive
-                    information to train models. Your data belongs to you — not advertisers, not data brokers, not us.
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    <span className="px-3 py-1.5 rounded-full bg-slate-700 text-sm text-slate-300 border border-slate-600">
-                      No data selling
-                    </span>
-                    <span className="px-3 py-1.5 rounded-full bg-slate-700 text-sm text-slate-300 border border-slate-600">
-                      No third-party sharing
-                    </span>
-                    <span className="px-3 py-1.5 rounded-full bg-slate-700 text-sm text-slate-300 border border-slate-600">
-                      No model training
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-            {/* Phone = Your Key */}
-            <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 hover:border-blue-500/40 transition-colors group">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors">
-                <Lock className="w-6 h-6 text-[#60A5FA]" />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">Phone = Your Key</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Your 10-digit phone number is your secure login. Only you can access your conversation history — not even executives.
-              </p>
-            </div>
+            {/* Zero Breaches */}
+            <motion.div
+              ref={breaches.ref}
+              className="bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 rounded-2xl p-6 border border-emerald-500/30 text-center"
+              whileHover={{ scale: 1.03, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <ShieldCheck className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
+              <div className="text-5xl font-bold text-emerald-400 mb-1">{breaches.count}</div>
+              <div className="text-sm text-emerald-300 font-medium">Data Breaches</div>
+              <div className="text-xs text-slate-400 mt-1">Since 2024</div>
+            </motion.div>
 
-            {/* Anonymous to Leadership */}
-            <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 hover:border-blue-500/40 transition-colors group">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors">
-                <Eye className="w-6 h-6 text-[#60A5FA]" />
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">Anonymous to Leadership</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Executives get actionable insights, never raw conversations or identities. The trust layer that makes honesty possible.
-              </p>
-            </div>
+            {/* 256-bit Encryption */}
+            <motion.div
+              ref={encryption.ref}
+              className="bg-slate-800 rounded-2xl p-6 border border-slate-700 text-center"
+              whileHover={{ scale: 1.03, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Lock className="w-10 h-10 text-[#60A5FA] mx-auto mb-4" />
+              <div className="text-5xl font-bold text-white mb-1">{encryption.count}</div>
+              <div className="text-sm text-slate-300 font-medium">Bit Encryption</div>
+              <div className="text-xs text-slate-400 mt-1">AES Standard</div>
+            </motion.div>
 
-            {/* SOC 2 + GDPR - spans 2 cols on lg */}
-            <div className="lg:col-span-2 bg-slate-800 rounded-2xl p-6 border border-slate-700 hover:border-blue-500/40 transition-colors group">
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500/30 transition-colors">
-                  <CheckCircle2 className="w-6 h-6 text-[#60A5FA]" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white mb-2">Enterprise-Grade Compliance</h3>
-                  <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                    SOC 2 Type II certified. GDPR compliant. Built for regulated industries with independently audited security practices.
-                  </p>
-                  <div className="flex gap-4">
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                      SOC 2 Type II
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                      GDPR Compliant
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                      End-to-End Encrypted
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* 100% Anonymous */}
+            <motion.div
+              className="bg-slate-800 rounded-2xl p-6 border border-slate-700 text-center"
+              whileHover={{ scale: 1.03, y: -4 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Eye className="w-10 h-10 text-[#60A5FA] mx-auto mb-4" />
+              <div className="text-5xl font-bold text-white mb-1">100%</div>
+              <div className="text-sm text-slate-300 font-medium">Anonymous</div>
+              <div className="text-xs text-slate-400 mt-1">Insights, not identities</div>
+            </motion.div>
+
           </div>
+        </ScrollAnimation>
+
+        {/* Compliance Badges Row */}
+        <ScrollAnimation delay={0.2}>
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+            <motion.div
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-800/80 rounded-full border border-slate-700"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="w-2 h-2 bg-emerald-400 rounded-full" />
+              <span className="text-xs sm:text-sm font-semibold text-white">SOC 2</span>
+              <span className="text-[10px] sm:text-xs text-slate-400">Type II</span>
+            </motion.div>
+            <motion.div
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-800/80 rounded-full border border-slate-700"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="w-2 h-2 bg-blue-400 rounded-full" />
+              <span className="text-xs sm:text-sm font-semibold text-white">GDPR</span>
+              <span className="text-[10px] sm:text-xs text-slate-400">Compliant</span>
+            </motion.div>
+            <motion.div
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-800/80 rounded-full border border-slate-700"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="w-2 h-2 bg-purple-400 rounded-full" />
+              <span className="text-xs sm:text-sm font-semibold text-white">CCPA</span>
+              <span className="text-[10px] sm:text-xs text-slate-400">Compliant</span>
+            </motion.div>
+          </div>
+        </ScrollAnimation>
+
+        {/* Bottom Banner */}
+        <ScrollAnimation delay={0.3}>
+          <motion.div
+            className="bg-gradient-to-r from-[#3B82F6]/10 via-slate-800 to-[#3B82F6]/10 rounded-2xl p-6 border border-blue-500/20 text-center"
+            whileHover={{ scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <div className="flex items-center justify-center gap-4">
+              <Shield className="w-6 h-6 text-[#60A5FA]" />
+              <div>
+                <div className="text-base font-semibold text-white">We Never Sell, Share, or Train on Your Data</div>
+                <div className="text-sm text-slate-400">Your data belongs to you — not advertisers, not us.</div>
+              </div>
+              <Shield className="w-6 h-6 text-[#60A5FA]" />
+            </div>
+          </motion.div>
         </ScrollAnimation>
       </div>
     </section>

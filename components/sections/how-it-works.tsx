@@ -4,6 +4,7 @@ import { useState, useRef } from "react"
 import { MessageSquare, Shield, LineChart, CheckCircle, Calendar } from "lucide-react"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
 import { BorderBeam } from "@/components/ui/border-beam"
+import { CalendlyModal } from "@/components/ui/calendly-modal"
 
 const steps = [
   {
@@ -47,6 +48,7 @@ export function HowItWorksSection() {
   const cardRef = useRef<HTMLDivElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false)
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
@@ -120,6 +122,7 @@ export function HowItWorksSection() {
                   Get started in under 2 minutes.
                 </p>
                 <button
+                  onClick={() => setIsCalendlyOpen(true)}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white font-semibold text-sm shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 transition-all duration-300"
                 >
                   <Calendar className="w-4 h-4" />
@@ -129,6 +132,9 @@ export function HowItWorksSection() {
             </div>
           </div>
         </ScrollAnimation>
+
+        {/* Calendly Modal */}
+        <CalendlyModal isOpen={isCalendlyOpen} onClose={() => setIsCalendlyOpen(false)} />
       </div>
     </section>
   )

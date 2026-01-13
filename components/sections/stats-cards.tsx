@@ -1,122 +1,89 @@
 "use client"
 
 import { useState } from "react"
-import { Check, MessageSquare, Users, Zap, Mail, Clock, TrendingUp } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { MessageSquare, Users, Zap, Mail, Clock, TrendingUp } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
-import { TiltCard } from "@/components/ui/tilt-card"
+
+// Spring configuration for smooth, natural animations
+const springConfig = {
+  stiffness: 100,
+  damping: 15,
+  mass: 0.5,
+}
 
 const comparisonData = {
   hrTools: {
     stats: [
-      { icon: Mail, value: "20%", label: "Open Rate", description: "Emails nobody reads" },
-      { icon: Users, value: "35%", label: "Response Rate", description: "Survey fatigue" },
-      { icon: Clock, value: "6 weeks", label: "Time to Insights", description: "Data already stale" },
+      { icon: Mail, value: "20%", label: "Open Rate", description: "Lost in inbox, ignored" },
+      { icon: Users, value: "35%", label: "Response Rate", description: "Survey fatigue is real" },
+      { icon: Clock, value: "6 weeks", label: "Time to Insights", description: "Stale before you see it" },
     ],
+    accentColor: "slate",
   },
   coro: {
     stats: [
-      { icon: MessageSquare, value: "98%", label: "Open Rate", description: "SMS everyone reads" },
-      { icon: TrendingUp, value: "80%", label: "Response Rate", description: "Real engagement" },
-      { icon: Zap, value: "Instant", label: "Time to Insights", description: "Act immediately" },
+      { icon: MessageSquare, value: "98%", label: "Open Rate", description: "Everyone reads texts" },
+      { icon: TrendingUp, value: "80%", label: "Response Rate", description: "Real conversations" },
+      { icon: Zap, value: "Real-time", label: "Time to Insights", description: "Act on day one, not day sixty" },
     ],
+    accentColor: "blue",
   },
 }
 
-const features = [
-  {
-    title: "98% Open Rate",
-    description: "SMS messages get read in under 3 minutes, not buried in inboxes.",
-  },
-  {
-    title: "80% Response Rate",
-    description: "No logins, no apps, no friction. Just text and talk.",
-  },
-  {
-    title: "Instant Insights",
-    description: "See trends as they happen, not 6 weeks later in a PDF.",
-  },
-]
-
 export function StatsCardsSection() {
   const [activeTab, setActiveTab] = useState<"hrTools" | "coro">("coro")
-  const [isAnimating, setIsAnimating] = useState(false)
   const isHrTools = activeTab === "hrTools"
   const data = comparisonData[activeTab]
 
-  const handleTabChange = (tab: "hrTools" | "coro") => {
-    if (tab === activeTab) return
-    setIsAnimating(true)
-    setTimeout(() => {
-      setActiveTab(tab)
-      setTimeout(() => setIsAnimating(false), 50)
-    }, 200)
-  }
-
   return (
     <section className="py-16 lg:py-24 bg-gradient-to-b from-white to-slate-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <ScrollAnimation>
+            <Badge variant="outline" className="text-[#0066FF] border-[#0066FF]/30 bg-[#0066FF]/5 mb-4">
+              Why Coro
+            </Badge>
+            <h2 className="text-4xl lg:text-5xl tracking-tight font-bold text-slate-900">
+              Stop Asking. Start Listening.
+            </h2>
+            <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+              Traditional surveys miss the moment. Coro catches it.
+            </p>
+          </ScrollAnimation>
+        </div>
+
+        {/* Interactive Comparison */}
         <ScrollAnimation>
-          <TiltCard className="grid border border-slate-200 rounded-3xl p-8 lg:p-12 grid-cols-1 gap-10 items-center lg:grid-cols-2 bg-white shadow-xl shadow-slate-200/50" intensity={3} glare={false}>
-            {/* Left Column: Content */}
-            <div className="flex gap-8 flex-col">
-              <div className="flex gap-4 flex-col">
-                <div>
-                  <Badge variant="outline" className="text-[#0066FF] border-[#0066FF]/30 bg-[#0066FF]/5">
-                    Why Coro
-                  </Badge>
-                </div>
-                <div className="flex gap-3 flex-col">
-                  <h2 className="text-3xl lg:text-5xl tracking-tight max-w-xl text-left font-bold text-slate-900">
-                    Stop Asking.<br />Start Listening.
-                  </h2>
-                  <p className="text-lg leading-relaxed text-slate-500 max-w-xl text-left">
-                    Annual surveys ask questions. Coro hears answers — in real time, on their terms.
-                  </p>
-                </div>
-              </div>
-
-              {/* Feature List */}
-              <div className="grid lg:pl-2 grid-cols-1 gap-5">
-                {features.map((feature, index) => (
-                  <div key={index} className="flex flex-row gap-4 items-start">
-                    <div className="w-6 h-6 rounded-full bg-[#0066FF]/10 flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-4 h-4 text-[#0066FF]" />
-                    </div>
-                    <div className="flex flex-col gap-0.5">
-                      <p className="font-semibold text-slate-900">{feature.title}</p>
-                      <p className="text-slate-500 text-sm">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Column: Interactive Comparison */}
-            <div className={`relative rounded-2xl overflow-hidden transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              isHrTools ? "bg-slate-50" : "bg-gradient-to-br from-[#0066FF]/5 to-blue-50"
-            }`}>
+          <div className="border rounded-2xl bg-white shadow-lg max-w-3xl mx-auto overflow-hidden">
+            <motion.div
+              className="relative rounded-2xl overflow-hidden"
+              animate={{
+                backgroundColor: isHrTools ? "rgb(248, 250, 252)" : "rgb(239, 246, 255)",
+              }}
+              transition={{ type: "spring", ...springConfig }}
+            >
               {/* Toggle */}
-              <div className="px-6 py-5 flex justify-center">
-                <div className="inline-flex rounded-full p-1.5 bg-white border border-slate-200 shadow-sm">
+              <div className="px-6 py-6 flex justify-center">
+                <div className="inline-flex rounded-full p-1 bg-slate-100 border border-slate-200">
                   <button
-                    onClick={() => handleTabChange("hrTools")}
-                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                    onClick={() => setActiveTab("hrTools")}
+                    className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
                       isHrTools
-                        ? "bg-slate-700 text-white shadow-lg"
-                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                        ? "bg-white text-slate-900 shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
-                    HR Tools
+                    HR Software
                   </button>
                   <button
-                    onClick={() => handleTabChange("coro")}
-                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                    onClick={() => setActiveTab("coro")}
+                    className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
                       !isHrTools
-                        ? "bg-gradient-to-r from-[#0066FF] to-[#0052CC] text-white shadow-lg shadow-blue-500/30"
-                        : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+                        ? "bg-[#0066FF] text-white shadow-md"
+                        : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
                     Coro
@@ -125,62 +92,111 @@ export function StatsCardsSection() {
               </div>
 
               {/* Divider */}
-              <div className={`h-px transition-all duration-[1000ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                isHrTools ? "bg-slate-200" : "bg-[#0066FF]/20"
-              }`} />
+              <motion.div
+                className="h-px"
+                animate={{
+                  backgroundColor: isHrTools ? "rgb(226, 232, 240)" : "rgba(0, 102, 255, 0.2)",
+                }}
+                transition={{ type: "spring", ...springConfig }}
+              />
 
               {/* Stats */}
-              <div className="p-6 lg:p-8">
-                <div className={`grid grid-cols-3 gap-4 transition-all duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                  isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
-                }`}>
-                  {data.stats.map((stat, index) => (
-                    <div key={index} className="text-center">
-                      <div className="flex justify-center mb-3">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                          isHrTools
-                            ? "bg-slate-200"
-                            : "bg-gradient-to-br from-[#0066FF] to-[#3B82F6] shadow-lg shadow-blue-500/30"
-                        }`}>
-                          <stat.icon className={`w-6 h-6 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                            isHrTools ? "text-slate-400" : "text-white"
-                          }`} />
+              <div className="p-8 lg:p-10">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ type: "spring", ...springConfig }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                  >
+                    {data.stats.map((stat, index) => (
+                      <motion.div
+                        key={index}
+                        className="text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          type: "spring",
+                          ...springConfig,
+                          delay: index * 0.1,
+                        }}
+                      >
+                        {/* Icon */}
+                        <div className="flex justify-center mb-4">
+                          <motion.div
+                            className="w-14 h-14 rounded-xl flex items-center justify-center"
+                            animate={{
+                              backgroundColor: isHrTools ? "rgb(226, 232, 240)" : "rgb(0, 102, 255)",
+                              boxShadow: isHrTools
+                                ? "none"
+                                : "0 10px 15px -3px rgba(0, 102, 255, 0.25)",
+                            }}
+                            transition={{ type: "spring", ...springConfig }}
+                          >
+                            <stat.icon
+                              className="w-6 h-6"
+                              style={{ color: isHrTools ? "#94a3b8" : "#ffffff" }}
+                            />
+                          </motion.div>
                         </div>
-                      </div>
-                      <div className={`text-2xl lg:text-3xl font-bold mb-1 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                        isHrTools ? "text-slate-400" : "text-[#0066FF]"
-                      }`}>
-                        {stat.value}
-                      </div>
-                      <div className={`text-xs font-semibold mb-0.5 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                        isHrTools ? "text-slate-400" : "text-slate-900"
-                      }`}>
-                        {stat.label}
-                      </div>
-                      <div className={`text-xs transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                        isHrTools ? "text-slate-300" : "text-slate-500"
-                      }`}>
-                        {stat.description}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+
+                        {/* Value */}
+                        <motion.div
+                          className="text-3xl lg:text-4xl font-bold mb-1"
+                          animate={{
+                            color: isHrTools ? "#94a3b8" : "#0066FF",
+                          }}
+                          transition={{ type: "spring", ...springConfig }}
+                        >
+                          {stat.value}
+                        </motion.div>
+
+                        <motion.div
+                          className="text-sm font-semibold mb-2"
+                          animate={{
+                            color: isHrTools ? "#94a3b8" : "#0f172a",
+                          }}
+                          transition={{ type: "spring", ...springConfig }}
+                        >
+                          {stat.label}
+                        </motion.div>
+                        <motion.div
+                          className="text-sm leading-relaxed"
+                          animate={{
+                            color: isHrTools ? "#94a3b8" : "#475569",
+                          }}
+                          transition={{ type: "spring", ...springConfig }}
+                        >
+                          {stat.description}
+                        </motion.div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Footnote */}
+              <div className="px-8 pb-4">
+                <p className="text-xs text-slate-400 text-center">
+                  Based on SMS vs. email engagement benchmarks
+                </p>
               </div>
 
               {/* Bottom Accent */}
-              <div className={`h-1 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                isHrTools
-                  ? "bg-slate-200"
-                  : "bg-gradient-to-r from-[#0066FF] via-[#3B82F6] to-[#60A5FA]"
-              }`} />
-            </div>
-          </TiltCard>
+              <motion.div
+                className="h-1.5"
+                animate={{
+                  background: isHrTools
+                    ? "rgb(226, 232, 240)"
+                    : "linear-gradient(to right, #0066FF, #3B82F6, #60A5FA)",
+                }}
+                transition={{ type: "spring", ...springConfig }}
+              />
+            </motion.div>
+          </div>
         </ScrollAnimation>
-
-        {/* Hint text */}
-        <p className="text-center text-sm text-slate-400 mt-6">
-          Click the toggle to compare
-        </p>
       </div>
     </section>
   )

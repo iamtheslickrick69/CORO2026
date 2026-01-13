@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "framer-motion"
 
 const accordionItems = [
   {
@@ -30,6 +31,13 @@ const accordionItems = [
   },
 ]
 
+// Spring configuration for smooth, natural animations
+const springConfig = {
+  stiffness: 100,
+  damping: 15,
+  mass: 0.5,
+}
+
 interface AccordionItemProps {
   item: {
     id: number
@@ -38,25 +46,40 @@ interface AccordionItemProps {
   }
   isActive: boolean
   onMouseEnter: () => void
+  index: number
 }
 
-function AccordionItem({ item, isActive, onMouseEnter }: AccordionItemProps) {
+function AccordionItem({ item, isActive, onMouseEnter, index }: AccordionItemProps) {
   return (
-    <div
-      className={`
-        relative h-[400px] lg:h-[450px] rounded-2xl overflow-hidden cursor-pointer
-        transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)]
-        ${isActive ? "w-[280px] sm:w-[320px] lg:w-[400px]" : "w-[50px] sm:w-[55px] lg:w-[60px]"}
-      `}
+    <motion.div
+      className="relative h-[400px] lg:h-[450px] rounded-2xl overflow-hidden cursor-pointer"
+      animate={{
+        width: isActive ? 400 : 60,
+      }}
+      transition={{
+        type: "spring",
+        ...springConfig,
+        delay: index * 0.02, // Subtle stagger
+      }}
       onMouseEnter={onMouseEnter}
+      style={{
+        boxShadow: isActive
+          ? "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+          : "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+      }}
     >
       {/* Background Image */}
-      <img
+      <motion.img
         src={item.imageUrl}
         alt={item.title}
-        className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          isActive ? "grayscale-0" : "grayscale"
-        }`}
+        className="absolute inset-0 w-full h-full object-cover"
+        animate={{
+          filter: isActive ? "brightness(1)" : "brightness(0.7)",
+        }}
+        transition={{
+          type: "spring",
+          ...springConfig,
+        }}
         onError={(e) => {
           const target = e.target as HTMLImageElement
           target.onerror = null
@@ -64,24 +87,36 @@ function AccordionItem({ item, isActive, onMouseEnter }: AccordionItemProps) {
         }}
       />
 
-      {/* Subtle dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+      {/* Dark gradient overlay */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
+        animate={{
+          opacity: isActive ? 0.8 : 1,
+        }}
+        transition={{
+          type: "spring",
+          ...springConfig,
+        }}
+      />
 
-      {/* Caption Text */}
-      <span
-        className={`
-          absolute text-white text-base lg:text-lg font-semibold whitespace-nowrap
-          transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] drop-shadow-lg
-          ${
-            isActive
-              ? "bottom-6 left-1/2 -translate-x-1/2 rotate-0 opacity-100"
-              : "w-auto text-left bottom-24 left-1/2 -translate-x-1/2 -rotate-90 origin-center opacity-90"
-          }
-        `}
+      {/* Caption Text - Horizontal when collapsed, normal when expanded */}
+      <motion.span
+        className="absolute text-white text-base lg:text-lg font-semibold whitespace-nowrap drop-shadow-lg"
+        animate={{
+          bottom: isActive ? 24 : 96,
+          left: "50%",
+          x: "-50%",
+          rotate: isActive ? 0 : -90,
+          opacity: isActive ? 1 : 0.9,
+        }}
+        transition={{
+          type: "spring",
+          ...springConfig,
+        }}
       >
         {item.title}
-      </span>
-    </div>
+      </motion.span>
+    </motion.div>
   )
 }
 
@@ -100,6 +135,7 @@ export function ImageAccordion() {
           item={item}
           isActive={index === activeIndex}
           onMouseEnter={() => handleItemHover(index)}
+          index={index}
         />
       ))}
     </div>

@@ -1,6 +1,14 @@
 "use client"
 
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useRef, useState, useEffect, type ReactNode } from "react"
+import { motion, useInView } from "framer-motion"
+
+// Consistent spring config across the app
+const springConfig = {
+  stiffness: 100,
+  damping: 15,
+  mass: 0.5,
+}
 
 interface ScrollAnimationProps {
   children: ReactNode
@@ -11,82 +19,56 @@ interface ScrollAnimationProps {
 
 export function ScrollAnimation({ children, className = "", delay = 0, threshold = 0.1 }: ScrollAnimationProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-          observer.unobserve(entry.target)
-        }
-      },
-      { threshold },
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => observer.disconnect()
-  }, [threshold])
+  const isInView = useInView(ref, { once: true, amount: threshold })
 
   return (
-    <div
+    <motion.div
       ref={ref}
       className={className}
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateY(0)" : "translateY(30px)",
-        transition: `opacity 0.6s ease-out ${delay}s, transform 0.6s ease-out ${delay}s`,
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{
+        type: "spring",
+        ...springConfig,
+        delay: delay,
       }}
     >
       {children}
-    </div>
+    </motion.div>
   )
 }
 
 export function CountUp({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) {
-  const [count, setCount] = useState(0)
   const ref = useRef<HTMLSpanElement>(null)
-  const [hasStarted, setHasStarted] = useState(false)
+  const isInView = useInView(ref, { once: true, amount: 0.5 })
+  const [count, setCount] = useState(0)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasStarted) {
-          setHasStarted(true)
-        }
-      },
-      { threshold: 0.5 },
-    )
-
-    if (ref.current) {
-      observer.observe(ref.current)
-    }
-
-    return () => observer.disconnect()
-  }, [hasStarted])
-
-  useEffect(() => {
-    if (!hasStarted) return
+    if (!isInView) return
 
     let startTime: number
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp
       const progress = Math.min((timestamp - startTime) / (duration * 1000), 1)
-      setCount(Math.floor(progress * end))
+      // Ease out cubic for smooth deceleration
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+      setCount(Math.floor(easedProgress * end))
       if (progress < 1) {
         requestAnimationFrame(step)
       }
     }
     requestAnimationFrame(step)
-  }, [hasStarted, end, duration])
+  }, [isInView, end, duration])
 
   return (
-    <span ref={ref}>
+    <motion.span
+      ref={ref}
+      initial={{ opacity: 0, y: 10 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+      transition={{ type: "spring", ...springConfig }}
+    >
       {count}
       {suffix}
-    </span>
+    </motion.span>
   )
 }

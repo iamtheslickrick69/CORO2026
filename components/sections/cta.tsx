@@ -1,10 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { Check } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
+import { CalendlyModal } from "@/components/ui/calendly-modal"
 
 const benefits = [
   {
@@ -22,6 +24,8 @@ const benefits = [
 ]
 
 export function CTASection() {
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false)
+
   return (
     <section className="py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,15 +68,17 @@ export function CTASection() {
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <Button
+                  onClick={() => setIsCalendlyOpen(true)}
                   size="lg"
-                  className="bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0066FF] text-white px-8 py-6 text-base font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 transition-all duration-300 whitespace-nowrap"
+                  className="bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:from-[#0052CC] hover:to-[#0066FF] text-white h-12 px-8 text-base font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
                 >
                   Book a Demo
                 </Button>
                 <Button
                   variant="outline"
                   size="lg"
-                  className="px-8 py-6 text-base font-semibold border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-[#0066FF]/40 hover:text-[#0066FF] transition-all duration-300 whitespace-nowrap"
+                  className="h-12 px-8 text-base font-semibold border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-[#0066FF]/40 hover:text-[#0066FF] hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap"
+                  onClick={() => document.getElementById('coro-demo')?.scrollIntoView({ behavior: 'smooth' })}
                 >
                   Watch Demo
                 </Button>
@@ -99,6 +105,9 @@ export function CTASection() {
             </div>
           </div>
         </ScrollAnimation>
+
+        {/* Calendly Modal */}
+        <CalendlyModal isOpen={isCalendlyOpen} onClose={() => setIsCalendlyOpen(false)} />
       </div>
     </section>
   )

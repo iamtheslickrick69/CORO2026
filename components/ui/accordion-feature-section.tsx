@@ -151,6 +151,24 @@ export function AccordionFeatureSection() {
             </div>
           </div>
         </ScrollAnimation>
+
+        {/* Trust Badges - Below Accordion */}
+        <ScrollAnimation delay={0.2}>
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-16 lg:mt-20">
+            <div className="flex items-center gap-3 text-base font-semibold text-gray-700 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm hover:border-[#0066FF]/40 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0066FF]/20 to-[#3385FF]/30 flex items-center justify-center shrink-0">
+                <Shield className="w-5 h-5 text-[#0066FF]" />
+              </div>
+              <span className="whitespace-nowrap">End-to-End Encrypted</span>
+            </div>
+            <div className="flex items-center gap-3 text-base font-semibold text-gray-700 bg-white border border-slate-200 px-6 py-4 rounded-2xl shadow-sm hover:border-[#0066FF]/40 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0066FF]/20 to-[#3385FF]/30 flex items-center justify-center shrink-0">
+                <BarChart3 className="w-5 h-5 text-[#0066FF]" />
+              </div>
+              <span className="whitespace-nowrap">80% Response Rate</span>
+            </div>
+          </div>
+        </ScrollAnimation>
       </div>
     </section>
   )

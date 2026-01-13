@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, Calendar, Lock, MessageSquare, ChevronDown } from "lucide-react"
+import { ArrowRight, Calendar, ChevronDown } from "lucide-react"
 import { ImageAccordion } from "@/components/ui/image-accordion"
 import { CalendlyModal } from "@/components/ui/calendly-modal"
 import { SubtleButton } from "@/components/ui/subtle-button"
@@ -101,12 +101,12 @@ export function HeroSection() {
 
             {/* Headline */}
             <h1
-              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-6 transition-all duration-700 delay-100 ${
+              className={`text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-6 transition-all duration-700 delay-100 ${
                 mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
               <span className="block">The #1 Platform to Collect</span>
-              <span className="block whitespace-nowrap">
+              <span className="block sm:whitespace-nowrap">
                 Real Feedback From{" "}
                 <span
                   className={`inline-block bg-gradient-to-r from-[#0066FF] via-[#0052CC] to-[#0066FF] bg-clip-text text-transparent transition-all duration-700 ease-in-out ${
@@ -129,38 +129,26 @@ export function HeroSection() {
               shared or sold.
             </p>
 
-            {/* Trust Points */}
-            <div
-              className={`flex flex-wrap items-center justify-center gap-3 mb-8 transition-all duration-700 delay-300 ${
-                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-            >
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 glass-card px-3 py-2.5 rounded-xl hover:border-[#0066FF]/60 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#0066FF]/20 to-[#3385FF]/30 flex items-center justify-center shrink-0">
-                  <Lock className="w-3.5 h-3.5 text-[#0066FF]" />
-                </div>
-                <span className="whitespace-nowrap">End-to-End Encrypted</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 glass-card px-3 py-2.5 rounded-xl hover:border-[#0066FF]/60 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#0066FF]/20 to-[#3385FF]/30 flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-3.5 h-3.5 text-[#0066FF]" />
-                </div>
-                <span className="whitespace-nowrap">80% Response Rate</span>
-              </div>
-            </div>
-
             {/* CTA Buttons */}
             <div
-              className={`flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 transition-all duration-700 delay-400 ${
+              className={`flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-700 delay-300 ${
                 mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
             >
-              <SubtleButton href="#coro-demo" variant="primary" className="h-12 text-base">
+              <SubtleButton
+                href="#coro-demo"
+                variant="primary"
+                className="h-12 px-8 text-base font-semibold shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30"
+              >
                 See Coro in Action
                 <ArrowRight className="w-4 h-4" />
               </SubtleButton>
 
-              <SubtleButton onClick={() => setIsCalendlyOpen(true)} variant="secondary" className="h-12 text-base">
+              <SubtleButton
+                onClick={() => setIsCalendlyOpen(true)}
+                variant="secondary"
+                className="h-12 px-8 text-base font-semibold"
+              >
                 <Calendar className="w-4 h-4 text-[#0066FF]" />
                 Book Demo
               </SubtleButton>

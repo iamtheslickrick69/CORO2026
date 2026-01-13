@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
+import { CalendlyModal } from "@/components/ui/calendly-modal"
 
 const faqs = [
   {
@@ -44,6 +46,8 @@ const faqs = [
 ]
 
 export function FAQSection() {
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false)
+
   return (
     <section className="py-20 lg:py-32 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -69,7 +73,10 @@ export function FAQSection() {
                   </p>
                 </div>
                 <div className="pt-2">
-                  <Button className="bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:opacity-90 text-white px-6 py-5 text-base font-semibold whitespace-nowrap">
+                  <Button
+                    onClick={() => setIsCalendlyOpen(true)}
+                    className="bg-gradient-to-r from-[#0066FF] to-[#0052CC] hover:opacity-90 text-white px-6 py-5 text-base font-semibold whitespace-nowrap"
+                  >
                     Any Questions? Reach Out
                   </Button>
                 </div>
@@ -98,6 +105,8 @@ export function FAQSection() {
           </ScrollAnimation>
         </div>
       </div>
+
+      <CalendlyModal isOpen={isCalendlyOpen} onClose={() => setIsCalendlyOpen(false)} />
     </section>
   )
 }

@@ -467,18 +467,4 @@
   }
 }
 
-/* Smooth, graceful transitions */
-html {
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-* {
-  transition-property: background-color, border-color, color, fill, stroke, box-shadow, transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 0.4s;
-}
-
-/* Override for interactive elements - even smoother */
-button, a, [role="button"] {
-  transition-duration: 0.5s !important;
-}
+/* Let Framer Motion handle all animations - no global CSS transition overrides */

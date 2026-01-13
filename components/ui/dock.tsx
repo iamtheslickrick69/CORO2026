@@ -108,7 +108,7 @@ function Dock({
           mouseX.set(Infinity);
         }}
         className={cn(
-          'mx-auto flex w-fit gap-4 rounded-3xl bg-gray-50 px-4 dark:bg-neutral-900',
+          'mx-auto flex w-fit gap-5 rounded-2xl bg-gray-50 px-5 dark:bg-neutral-900',
           className
         )}
         style={{ height: panelHeight }}
@@ -138,7 +138,7 @@ function DockItem({ children, className }: DockItemProps) {
   const widthTransform = useTransform(
     mouseDistance,
     [-distance, 0, distance],
-    [40, magnification, 40]
+    [48, magnification, 48]
   );
 
   const width = useSpring(widthTransform, spring);
@@ -168,10 +168,12 @@ function DockItem({ children, className }: DockItemProps) {
 
 function DockLabel({ children, className, ...rest }: DockLabelProps) {
   const restProps = rest as Record<string, unknown>;
-  const isHovered = restProps['isHovered'] as MotionValue<number>;
+  const isHovered = restProps['isHovered'] as MotionValue<number> | undefined;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (!isHovered) return;
+
     const unsubscribe = isHovered.on('change', (latest) => {
       setIsVisible(latest === 1);
     });
@@ -188,7 +190,7 @@ function DockLabel({ children, className, ...rest }: DockLabelProps) {
           exit={{ opacity: 0, y: 0 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'absolute -top-6 left-1/2 w-fit whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white',
+            'absolute -top-8 left-1/2 w-fit whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white shadow-lg',
             className
           )}
           role='tooltip'
@@ -203,13 +205,13 @@ function DockLabel({ children, className, ...rest }: DockLabelProps) {
 
 function DockIcon({ children, className, ...rest }: DockIconProps) {
   const restProps = rest as Record<string, unknown>;
-  const width = restProps['width'] as MotionValue<number>;
+  const width = restProps['width'] as MotionValue<number> | undefined;
 
-  const widthTransform = useTransform(width, (val) => val / 2);
+  const widthTransform = width ? useTransform(width, (val) => val / 2) : undefined;
 
   return (
     <motion.div
-      style={{ width: widthTransform }}
+      style={widthTransform ? { width: widthTransform } : undefined}
       className={cn('flex items-center justify-center', className)}
     >
       {children}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollAnimation } from "@/components/ui/scroll-animation"
@@ -22,11 +23,18 @@ interface CrisisData {
   }
 }
 
+// Spring configuration for smooth, natural animations
+const springConfig = {
+  stiffness: 100,
+  damping: 15,
+  mass: 0.5,
+}
+
 // Featured crisis (Broken Systems) - shown first as horizontal card
 const featuredCrisis: CrisisData = {
   id: "systems",
   label: "Broken Systems",
-  image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=80",
+  image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=1600&q=80",
   without: {
     description: "They don't want another dashboard. They want to be heard.",
     stat: "3 days",
@@ -42,61 +50,61 @@ const featuredCrisis: CrisisData = {
 // Other crises in 2-2 grid
 const crises: CrisisData[] = [
   {
-    id: "harassment",
-    label: "Harassment",
-    image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=800&q=80",
+    id: "feedback",
+    label: "Feedback",
+    image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=800&q=80",
     without: {
-      description: "Victims stay silent for 14 months on average.",
-      stat: "$200K+",
-      statLabel: "When it finally surfaces",
+      description: "Annual reviews miss 90% of what matters.",
+      stat: "1x/year",
+      statLabel: "When employees are heard",
     },
     with: {
-      description: "Coro breaks the silence.",
-      stat: "90%",
-      statLabel: "Early resolution",
+      description: "Always-on pulse. No surveys required.",
+      stat: "Daily",
+      statLabel: "Continuous insights",
     },
   },
   {
     id: "turnover",
     label: "Turnover",
-    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80",
     without: {
       description: "67% of employees who quit never told anyone.",
       stat: "33%",
       statLabel: "Of your team, gone",
     },
     with: {
-      description: "Coro breaks the silence.",
+      description: "Coro catches the signs before the resignation.",
       stat: "60%",
       statLabel: "Reduction in turnover",
     },
   },
   {
-    id: "toxic",
-    label: "Toxic Manager",
-    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=800&q=80",
+    id: "connection",
+    label: "Staying Connected",
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80",
     without: {
-      description: "Everyone knows. No one says anything.",
-      stat: "1 manager",
-      statLabel: "= 12 resignations",
+      description: "Remote teams drift apart silently.",
+      stat: "47%",
+      statLabel: "Feel disconnected at work",
     },
     with: {
-      description: "Coro breaks the silence.",
-      stat: "30 days",
-      statLabel: "To detection",
+      description: "Bridge the gap without another meeting.",
+      stat: "3x",
+      statLabel: "More team engagement",
     },
   },
   {
     id: "churn",
     label: "Customer Churn",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=800&q=80",
     without: {
       description: "Customers don't complain. They just leave.",
       stat: "25%",
-      statLabel: "Annual churn",
+      statLabel: "Annual churn rate",
     },
     with: {
-      description: "Coro breaks the silence.",
+      description: "Catch friction before it costs you.",
       stat: "40%",
       statLabel: "Churn reduction",
     },
@@ -105,11 +113,28 @@ const crises: CrisisData[] = [
 
 // Featured Crisis Card - Horizontal layout for hero position
 const FeaturedCrisisCard = ({ crisis }: { crisis: CrisisData }) => {
+  const [isHovered, setIsHovered] = useState(false)
+
   return (
-    <div className="group relative h-40 md:h-42 w-full cursor-pointer overflow-hidden rounded-xl shadow-lg">
+    <motion.div
+      className="relative h-40 md:h-44 w-full cursor-pointer overflow-hidden rounded-xl"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.005 }}
+      transition={{ type: "spring", ...springConfig }}
+      style={{
+        boxShadow: isHovered
+          ? "0 25px 50px -12px rgba(0, 0, 0, 0.35)"
+          : "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       {/* Background Image - Grayscale by default, color on hover */}
-      <div
-        className="absolute inset-0 transition-all duration-[2000ms] ease-[cubic-bezier(0.4,0,0.2,1)] scale-100 grayscale group-hover:grayscale-0 group-hover:scale-105"
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          filter: isHovered ? "grayscale(0) brightness(1.1)" : "grayscale(1) brightness(0.7)",
+        }}
+        transition={{ type: "spring", ...springConfig }}
         style={{
           backgroundImage: `url(${crisis.image})`,
           backgroundSize: "cover",
@@ -118,51 +143,98 @@ const FeaturedCrisisCard = ({ crisis }: { crisis: CrisisData }) => {
       />
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:from-black/80 group-hover:via-black/50 group-hover:to-black/30" />
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30"
+        animate={{
+          opacity: isHovered ? 0.9 : 1,
+        }}
+        transition={{ type: "spring", ...springConfig }}
+      />
 
       {/* Content Container - Horizontal layout */}
-      <div className="relative z-10 flex h-full items-center p-6 md:p-8">
+      <div className="relative z-10 flex h-full items-center p-5 sm:p-6 md:p-8">
         {/* Left side - Content */}
-        <div className="flex-1 max-w-2xl">
-          {/* WITHOUT CORO - Shows by default, hides on hover */}
-          <div className="transition-all duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] opacity-100 translate-y-0 group-hover:opacity-0 group-hover:-translate-y-4">
-            <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Without Coro</span>
-            <h3 className="text-2xl md:text-3xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
-            <p className="text-sm text-gray-300 mb-3 leading-relaxed max-w-lg">{crisis.without.description}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl md:text-4xl font-bold text-red-400">{crisis.without.stat}</p>
-              <p className="text-xs text-gray-400">{crisis.without.statLabel}</p>
-            </div>
-          </div>
-
-          {/* WITH CORO - Hidden by default, shows on hover */}
-          <div className="absolute top-1/2 -translate-y-1/2 left-6 md:left-8 transition-all duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-[-50%]">
-            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">With Coro</span>
-            <h3 className="text-2xl md:text-3xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
-            <p className="text-sm text-gray-200 mb-3 leading-relaxed max-w-lg">{crisis.with.description}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl md:text-4xl font-bold text-emerald-400">{crisis.with.stat}</p>
-              <p className="text-xs text-gray-300">{crisis.with.statLabel}</p>
-            </div>
-          </div>
+        <div className="flex-1 max-w-full sm:max-w-2xl">
+          <AnimatePresence mode="wait">
+            {!isHovered ? (
+              <motion.div
+                key="without"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ type: "spring", ...springConfig }}
+              >
+                <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Without Coro</span>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+                <p className="text-xs sm:text-sm text-gray-300 mb-3 leading-relaxed">{crisis.without.description}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl md:text-4xl font-bold text-red-400">{crisis.without.stat}</p>
+                  <p className="text-xs text-gray-400">{crisis.without.statLabel}</p>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="with"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ type: "spring", ...springConfig }}
+              >
+                <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">With Coro</span>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+                <p className="text-xs sm:text-sm text-gray-200 mb-3 leading-relaxed">{crisis.with.description}</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl md:text-4xl font-bold text-emerald-400">{crisis.with.stat}</p>
+                  <p className="text-xs text-gray-300">{crisis.with.statLabel}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Right side - Arrow */}
-        <div className="hidden md:flex items-center justify-center">
-          <ArrowRight className="w-7 h-7 text-white/60 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-white group-hover:-rotate-45" />
-        </div>
+        <motion.div
+          className="hidden md:flex items-center justify-center"
+          animate={{
+            rotate: isHovered ? -45 : 0,
+            scale: isHovered ? 1.1 : 1,
+          }}
+          transition={{ type: "spring", ...springConfig }}
+        >
+          <ArrowRight className="w-7 h-7 text-white/60" />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
-// Crisis Card component - Simple CSS approach (for 2x2 grid)
-const CrisisCard = ({ crisis }: { crisis: CrisisData }) => {
+// Crisis Card component - For 2x2 grid
+const CrisisCard = ({ crisis, index }: { crisis: CrisisData; index: number }) => {
+  const [isHovered, setIsHovered] = useState(false)
+
   return (
-    <div className="group relative h-60 w-full cursor-pointer overflow-hidden rounded-xl shadow-lg">
+    <motion.div
+      className="relative h-60 w-full cursor-pointer overflow-hidden rounded-xl"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.01 }}
+      transition={{ type: "spring", ...springConfig }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      style={{
+        boxShadow: isHovered
+          ? "0 25px 50px -12px rgba(0, 0, 0, 0.35)"
+          : "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+      }}
+    >
       {/* Background Image - Grayscale by default, color on hover */}
-      <div
-        className="absolute inset-0 transition-all duration-[2000ms] ease-[cubic-bezier(0.4,0,0.2,1)] scale-100 grayscale group-hover:grayscale-0 group-hover:scale-110"
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          filter: isHovered ? "grayscale(0) brightness(1.1)" : "grayscale(1) brightness(0.7)",
+        }}
+        transition={{ type: "spring", ...springConfig }}
         style={{
           backgroundImage: `url(${crisis.image})`,
           backgroundSize: "cover",
@@ -171,41 +243,67 @@ const CrisisCard = ({ crisis }: { crisis: CrisisData }) => {
       />
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:from-black/80 group-hover:via-black/40 group-hover:to-black/10" />
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10"
+        animate={{
+          opacity: isHovered ? 0.85 : 1,
+        }}
+        transition={{ type: "spring", ...springConfig }}
+      />
 
       {/* Content Container */}
       <div className="relative z-10 flex h-full flex-col justify-between p-5">
         {/* Top - Arrow */}
-        <div className="flex justify-end">
-          <ArrowRight className="w-5 h-5 text-white/60 transition-all duration-[1500ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:text-white group-hover:-rotate-45" />
-        </div>
+        <motion.div
+          className="flex justify-end"
+          animate={{
+            rotate: isHovered ? -45 : 0,
+          }}
+          transition={{ type: "spring", ...springConfig }}
+        >
+          <ArrowRight className="w-5 h-5 text-white/60" />
+        </motion.div>
 
         {/* Bottom - Content */}
         <div>
-          {/* WITHOUT CORO - Shows by default, hides on hover */}
-          <div className="transition-all duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] opacity-100 translate-y-0 group-hover:opacity-0 group-hover:-translate-y-4">
-            <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Without Coro</span>
-            <h3 className="text-xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
-            <p className="text-xs text-gray-300 mb-3 leading-relaxed">{crisis.without.description}</p>
-            <div className="pt-3 border-t border-white/20">
-              <p className="text-2xl font-bold text-red-400">{crisis.without.stat}</p>
-              <p className="text-xs text-gray-400">{crisis.without.statLabel}</p>
-            </div>
-          </div>
-
-          {/* WITH CORO - Hidden by default, shows on hover */}
-          <div className="absolute bottom-5 left-5 right-5 transition-all duration-[1200ms] ease-[cubic-bezier(0.4,0,0.2,1)] opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0">
-            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">With Coro</span>
-            <h3 className="text-xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
-            <p className="text-xs text-gray-200 mb-3 leading-relaxed">{crisis.with.description}</p>
-            <div className="pt-3 border-t border-white/30">
-              <p className="text-2xl font-bold text-emerald-400">{crisis.with.stat}</p>
-              <p className="text-xs text-gray-300">{crisis.with.statLabel}</p>
-            </div>
-          </div>
+          <AnimatePresence mode="wait">
+            {!isHovered ? (
+              <motion.div
+                key="without"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ type: "spring", ...springConfig }}
+              >
+                <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Without Coro</span>
+                <h3 className="text-xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+                <p className="text-xs text-gray-300 mb-3 leading-relaxed">{crisis.without.description}</p>
+                <div className="pt-3 border-t border-white/20">
+                  <p className="text-2xl font-bold text-red-400">{crisis.without.stat}</p>
+                  <p className="text-xs text-gray-400">{crisis.without.statLabel}</p>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="with"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ type: "spring", ...springConfig }}
+              >
+                <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">With Coro</span>
+                <h3 className="text-xl font-bold text-white mt-1 mb-2">{crisis.label}</h3>
+                <p className="text-xs text-gray-200 mb-3 leading-relaxed">{crisis.with.description}</p>
+                <div className="pt-3 border-t border-white/30">
+                  <p className="text-2xl font-bold text-emerald-400">{crisis.with.stat}</p>
+                  <p className="text-xs text-gray-300">{crisis.with.statLabel}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -213,8 +311,8 @@ export function CrisisPreventionSection() {
   const [isCalendlyOpen, setIsCalendlyOpen] = useState(false)
 
   return (
-    <section className="py-20 lg:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 lg:py-32 bg-white overflow-hidden">
+      <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
         {/* Section Header */}
         <ScrollAnimation className="text-center mb-16">
           <span className="text-sm font-semibold text-[#0066FF] uppercase tracking-wide">
@@ -223,7 +321,7 @@ export function CrisisPreventionSection() {
           <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
             The Cost of Silence
           </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
             Every crisis starts the same way: someone didn't speak up. Not because they didn't care — because no one was listening.
           </p>
         </ScrollAnimation>
@@ -237,15 +335,15 @@ export function CrisisPreventionSection() {
 
           {/* Row 2 - Two Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-            {crises.slice(0, 2).map((crisis) => (
-              <CrisisCard key={crisis.id} crisis={crisis} />
+            {crises.slice(0, 2).map((crisis, index) => (
+              <CrisisCard key={crisis.id} crisis={crisis} index={index} />
             ))}
           </div>
 
           {/* Row 3 - Two Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
-            {crises.slice(2, 4).map((crisis) => (
-              <CrisisCard key={crisis.id} crisis={crisis} />
+            {crises.slice(2, 4).map((crisis, index) => (
+              <CrisisCard key={crisis.id} crisis={crisis} index={index + 2} />
             ))}
           </div>
         </ScrollAnimation>

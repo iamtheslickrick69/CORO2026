@@ -17,12 +17,16 @@ export function CoroDemoSection() {
         muted
         playsInline
         preload="auto"
+        poster="/images/video-poster.jpg"
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "center center" }}
+        // @ts-ignore - webkit attribute for iOS
+        webkit-playsinline="true"
       >
         <source src="https://pub-7824dae2ffd24193b52760c54972be1d.r2.dev/000000000nick.mp4" type="video/mp4" />
       </video>
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-slate-900/60" />
+      {/* Dark Overlay - lighter on mobile for better video visibility */}
+      <div className="absolute inset-0 bg-slate-900/50 md:bg-slate-900/60" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,rgba(59,130,246,0.1),transparent)]" />
 
       {/* Tab Toggle */}
